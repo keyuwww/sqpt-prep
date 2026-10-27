@@ -1,0 +1,2064 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Squarepoint Prep Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: a study notebook. Narrow reading column, sticky control strip, question cards grouped by topic. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --surface-2:#eaeef4; --fg:#151a22; --muted:#5a6475; --line:#d6dce6;
+  --accent:#2a55c9; --accent-soft:#e3eafb; --got:#1f7a4d; --got-soft:#e2f2e9; --rev:#a3620a; --rev-soft:#fbefd9;
+  --code-bg:#f0f2f6; --hl:#fff3c4;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1319; --surface:#171c24; --surface-2:#202733; --fg:#e6eaf0; --muted:#98a3b4; --line:#2c3442;
+  --accent:#8aa8ff; --accent-soft:#1f2a45; --got:#5cc994; --got-soft:#163326; --rev:#f0b25a; --rev-soft:#3a2a12;
+  --code-bg:#11161d; --hl:#3a3315; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1319; --surface:#171c24; --surface-2:#202733; --fg:#e6eaf0; --muted:#98a3b4; --line:#2c3442;
+  --accent:#8aa8ff; --accent-soft:#1f2a45; --got:#5cc994; --got-soft:#163326; --rev:#f0b25a; --rev-soft:#3a2a12;
+  --code-bg:#11161d; --hl:#3a3315; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.6;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-inline:16px;padding-block:28px 80px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+header.top{display:grid;gap:14px;margin-bottom:18px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(30px,6vw,44px);font-weight:700;line-height:1.05;letter-spacing:-.01em}
+.lede{color:var(--muted);max-width:62ch;margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:8px}
+.stat{display:flex;align-items:baseline;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);font-variant-numeric:tabular-nums}
+.stat b{font-family:var(--f-mono);font-size:16px}
+.stat span{font-size:13px;color:var(--muted)}
+.stat.got b{color:var(--got)} .stat.rev b{color:var(--rev)}
+.bar{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .g{background:var(--got)} .bar .r{background:var(--rev)}
+
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);display:grid;gap:10px;margin-bottom:8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{flex:1 1 220px;min-width:0;font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+select,button{font:inherit;font-size:14px;color:var(--fg)}
+select{padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.btn{padding:7px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}
+.btn:focus-visible,.chip:focus-visible,.search:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.chip{flex:0 0 auto;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);cursor:pointer;font-size:13px;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
+.chip small{font-family:var(--f-mono);font-size:11px;margin-left:4px}
+label.tog{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);cursor:pointer}
+.timer{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted);min-width:4.5ch}
+
+.howto{font-size:14px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-block:14px}
+.howto b{color:var(--fg)}
+
+section.cat{margin-top:34px}
+section.cat>h2{font-size:24px;font-weight:600;display:flex;align-items:baseline;gap:10px}
+section.cat>h2 small{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-weight:400}
+section.cat>p{color:var(--muted);margin:4px 0 12px;max-width:65ch;font-size:14px}
+.list{display:grid;gap:10px}
+
+.q{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:8px;scroll-margin-top:150px}
+.q.flash{box-shadow:0 0 0 3px var(--accent)}
+.q[data-s="got"]{border-left:4px solid var(--got)}
+.q[data-s="rev"]{border-left:4px solid var(--rev)}
+.qhead{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.qid{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.tag{font-size:11px;font-family:var(--f-mono);letter-spacing:.03em;padding:1px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted)}
+.tag.sp{border-color:var(--accent);color:var(--accent)}
+.tag.last{border-color:var(--rev);color:var(--rev)}
+.lvl{font-size:11px;font-family:var(--f-mono);color:var(--muted)}
+.q h3{font-size:17px;font-weight:600;font-family:var(--f-body);line-height:1.35}
+.prompt{margin:0;min-width:0}
+.prompt p,.ans p{margin:0 0 8px}
+.actions{display:flex;flex-wrap:wrap;gap:6px}
+.actions .btn{font-size:13px;padding:5px 10px}
+.btn.s-got[aria-pressed="true"]{background:var(--got-soft);border-color:var(--got);color:var(--got)}
+.btn.s-rev[aria-pressed="true"]{background:var(--rev-soft);border-color:var(--rev);color:var(--rev)}
+.hint{font-size:14px;background:var(--surface-2);border-radius:6px;padding:8px 12px}
+.ans{border-top:1px dashed var(--line);padding-top:10px;min-width:0}
+.ans ul,.ans ol,.prompt ul{margin:0 0 8px;padding-left:20px}
+.ans li{margin-bottom:3px}
+.eq{font-family:var(--f-mono);font-size:14px;background:var(--code-bg);border-radius:6px;padding:8px 12px;margin:0 0 8px;overflow-x:auto;white-space:pre-wrap}
+code,.m{font-family:var(--f-mono);font-size:.92em}
+.m{white-space:nowrap}
+pre.code{font-family:var(--f-mono);font-size:13px;line-height:1.5;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:0;overflow-x:auto;tab-size:4}
+.key{background:var(--hl);padding:0 3px;border-radius:3px}
+.starter{display:grid;gap:8px;min-width:0}
+.starter-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.starter-top .btn{font-size:13px;padding:4px 10px}
+.starter pre.code{max-height:420px;overflow:auto}
+.opts{display:grid;gap:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);cursor:pointer;font-size:15px;line-height:1.45}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.opt:disabled{cursor:default;color:var(--fg)}
+.opt .ol{font-family:var(--f-mono);font-size:13px;color:var(--muted);flex:0 0 auto;padding-top:1px}
+.opt.right{border-color:var(--got);background:var(--got-soft)}
+.opt.right .ol{color:var(--got);font-weight:600}
+.opt.wrong{border-color:var(--rev);background:var(--rev-soft)}
+.opt.wrong .ol{color:var(--rev);font-weight:600}
+.fb{font-size:14px;font-weight:600;min-height:0}
+.fb.ok{color:var(--got)} .fb.no{color:var(--rev)}
+.mcqbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 12px}
+.mcqbar .score{font-family:var(--f-mono);font-size:14px;font-variant-numeric:tabular-nums}
+.mcqbar .btn{font-size:13px;padding:5px 10px}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+footer a{color:var(--accent)}
+@media (max-width:640px){.controls{position:static}.q{scroll-margin-top:16px}}
+@media (max-width:520px){.wrap{padding-block:18px 60px}.q{padding:12px}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Squarepoint · Junior QR · round 1 done · round 2: stats, maths &amp; financial intuition</div>
+    <h1>Squarepoint Prep Bank</h1>
+    <p class="lede">Questions reported from Squarepoint interviews (1point3acres, QuantVault and the notes you collected), plus the classics they build on. Each comes with a hint, a worked answer and, for coding, a Python solution. The LeetCode drills section adds starter code with checked test cases for the problems you've practised, and the Last-minute check at the top collects what to try right before the interview. The <b>Round 2</b> section covers the second technical round.</p>
+    <div class="stats" id="stats"></div>
+    <div class="bar" id="bar" aria-hidden="true"><i class="g"></i><i class="r"></i></div>
+  </header>
+
+  <div class="controls" id="controls">
+    <div class="row">
+      <input id="search" class="search" type="search" placeholder="Search questions, e.g. Kelly, dice, knapsack" aria-label="Search questions">
+      <select id="status" aria-label="Filter by status">
+        <option value="all">All statuses</option>
+        <option value="new">Not done yet</option>
+        <option value="rev">Marked review</option>
+        <option value="got">Got it</option>
+      </select>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Topics"></div>
+    <div class="row">
+      <button class="btn primary" id="random" type="button">Random question</button>
+      <span class="timer" id="timer" aria-live="off">0:00</span>
+      <button class="btn" id="timerReset" type="button">Reset timer</button>
+      <label class="tog"><input type="checkbox" id="lastOnly"> Last-minute list only</label>
+      <label class="tog"><input type="checkbox" id="spOnly"> Reported at Squarepoint only</label>
+      <label class="tog"><input type="checkbox" id="showAll"> Show all answers</label>
+    </div>
+  </div>
+
+  <div class="howto"><b>How to drill:</b> pick a question, start the timer, and answer out loud before opening the hint. Aim for under 5 minutes on probability and under 20 on coding. For LeetCode drills, copy the starter + tests into your editor and solve until every test passes. For a quick self-test, open the <b>Multiple-choice quiz</b> chip: tap an answer and the explanation opens. Mark each one <b>Got it</b> or <b>Review</b>; your marks stay in this browser so you can come back to the ones you missed a week later.</div>
+
+  <main id="main"></main>
+
+  <footer>
+    Sources: the screenshots you shared (QR intern notes, 2024–2026), 1point3acres threads
+    <a href="https://www.1point3acres.com/bbs/thread-1067056-1-1.html">1067056</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1092031-1-1.html">1092031</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-834530-1-1.html">834530</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1174039-1-1.html">1174039</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1187668-1-1.html">1187668</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1138303-1-1.html">1138303</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1191096-1-1.html">1191096</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1174473-1-1.html">1174473</a>,
+    <a href="https://www.1point3acres.com/bbs/thread-1171544-1-1.html">1171544</a>,
+    <a href="https://www.glassdoor.com/Interview/Squarepoint-Capital-Quantitative-Researcher-Intern-Interview-Questions-EI_IE1442647.0,19_KO20,50.htm">Glassdoor</a>,
+    <a href="https://www.quantt.co.uk/resources/squarepoint-interview">Quantt</a>,
+    <a href="https://quantvault.org/squarepoint-interview-questions.html">QuantVault</a>, and <a href="https://www.techinterview.org/post/3233477270/squarepoint-interview-quant-researchers-developers/">techinterview.org</a>. Green Book problems are paraphrased from Zhou, <i>A Practical Guide to Quantitative Finance Interviews</i>. Numeric answers were checked by computation or simulation.
+  </footer>
+</div>
+
+<script>
+const D=[];
+function add(c,o){o.c=c;D.push(o);}
+/* ===================== PROBABILITY ===================== */
+add("prob",{src:"sp",lvl:1,t:"Flips until HH, and until HT",
+q:`<p>A fair coin is flipped until you see two heads in a row. What is the expected number of flips? Follow-up: same question for H then T. Why are the answers different?</p>`,
+h:`Set up states: "nothing useful yet" and "last flip was H". Write one equation per state.`,
+a:`<p>Let <span class="m">a</span> = expected flips from scratch, <span class="m">b</span> = expected flips when the last flip was H.</p>
+<div class="eq">a = 1 + ½·b + ½·a
+b = 1 + ½·0 + ½·a
+⇒ a = 6</div>
+<p><b>HT:</b> wait for the first H (2 flips on average), then wait for a T (2 more): <span class="key">E = 4</span>.</p>
+<p><b>Why they differ:</b> for HH, a miss (HT) throws you back to scratch. For HT, a miss (HH) keeps you in the "last flip was H" state, so no progress is lost. Answer: <span class="key">HH = 6, HT = 4</span>.</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"Expected consecutive-head pairs",
+q:`<p>A biased coin has P(heads) = p. After n flips, what is the expected number of consecutive head pairs (overlapping pairs count, so HHH has 2)?</p>`,
+h:`Indicator for each adjacent position pair. Linearity of expectation does not need independence.`,
+a:`<p>Let X<sub>i</sub> = 1 if flips i and i+1 are both heads, for i = 1…n−1. E[X<sub>i</sub>] = p².</p>
+<div class="eq">E[pairs] = Σ E[X_i] = (n − 1)·p²</div>
+<p>The X<sub>i</sub> are dependent (they share flips), but linearity holds anyway. Be ready for the follow-up: the variance does need the covariances between neighbours.</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"1,000,000 flips, 510,000 heads",
+q:`<p>You flip a coin 1,000,000 times and get 510,000 heads. Is the coin biased? How confident are you?</p>`,
+h:`Under a fair coin, what are the mean and standard deviation of the head count?`,
+a:`<p>Under H₀ (fair): mean 500,000, SD = √(10⁶·¼) = <b>500</b>.</p>
+<p>The excess is 10,000 = <span class="key">20 standard deviations</span>. The p-value is astronomically small (around e<sup>−200</sup>), so the coin is almost certainly biased.</p>
+<p>Point estimate 0.51; 95% CI ≈ 0.51 ± 1.96·√(0.51·0.49/10⁶) ≈ 0.51 ± 0.001. A small bias becomes obvious with a huge sample.</p>`});
+
+add("prob",{src:"sp",lvl:2,t:"550/1000 vs 60/100: which coin is more biased?",
+q:`<p>Coin A gives 550 heads in 1000 flips. Coin B gives 60 heads in 100 flips. Which is more biased?</p>`,
+h:`Separate "how sure am I it is biased" from "how large is the bias".`,
+a:`<p><b>Evidence of bias (z-score vs fair):</b></p>
+<ul><li>A: SD = √(1000·¼) ≈ 15.8, excess 50 ⇒ z ≈ <b>3.16</b></li>
+<li>B: SD = √(100·¼) = 5, excess 10 ⇒ z = <b>2.0</b></li></ul>
+<p><b>Size of bias:</b> B's estimate (0.60) is larger than A's (0.55), but B's 95% CI is about 0.60 ± 0.096 (0.50 to 0.70) versus A's 0.55 ± 0.031 (0.52 to 0.58).</p>
+<p>Answer: <span class="key">A is more convincingly biased; B has the larger point estimate but much more uncertainty</span>. Say both, then ask which the interviewer means. A Bayesian with a prior on p would shrink B's estimate more.</p>`});
+
+add("prob",{src:"sp",lvl:2,t:"Fair coin vs unfair coin (Bayes)",
+q:`<p>One coin is fair; the other has P(H) = p > ½. You don't know which is which. Coin A is flipped 3 times and shows 2 heads. Coin B is flipped once and shows 1 head. Which coin is more likely to be the unfair one?</p>`,
+h:`Compare the likelihood of the data under "A unfair, B fair" vs "B unfair, A fair". The prior is 50/50.`,
+a:`<div class="eq">P(data | A unfair) = 3p²(1−p) · ½
+P(data | B unfair) = (3/8) · p
+Ratio = [3p²(1−p)/2] / [3p/8] = 4p(1−p)</div>
+<p>Since p(1−p) &lt; ¼ for p ≠ ½, the ratio is &lt; 1. <span class="key">B is more likely the unfair coin</span>, whatever p is.</p>
+<p><b>Faster (odds form):</b> each coin's likelihood ratio vs fair: A gives 8p²(1−p), B gives 2p. Compare 4p(1−p) to 1. Intuition: A's tail is evidence against A being the heads-biased coin.</p>`});
+
+add("prob",{src:"sp",lvl:3,t:"Roll until 6, conditioned on only 4, 5, 6",
+q:`<p>Roll a fair die until you get a 6. Let N be the number of rolls. (a) What is the distribution of N and E[N]? (b) Let A be the event that every roll was a 4, 5 or 6. What is E[N | A]? Write code to check, and explain the intuition.</p>`,
+h:`Conditioning on A is the same as stopping the game the moment any of 1, 2, 3 or 6 appears, and keeping only runs that end on 6.`,
+a:`<p>(a) N ~ Geometric(1/6), P(N = n) = (5/6)<sup>n−1</sup>(1/6), E[N] = 6.</p>
+<p>(b) Think of the game as ending when you roll any of {1, 2, 3, 6}. That happens with probability 4/6 each roll, so the ending time is Geometric(2/3) with mean 3/2. Which of the four faces ended it is independent of when it ended, so conditioning on "it ended with a 6" doesn't change the timing.</p>
+<p><span class="key">E[N | A] = 3/2</span>, not 3. The common wrong answer (3) comes from rolling a 3-sided die {4, 5, 6}; it ignores that long runs are much less likely to avoid 1, 2, 3.</p>`,
+code:String.raw`import random
+def sim(trials=10**6):
+    tot = cnt = 0
+    for _ in range(trials):
+        n = 0
+        while True:
+            x = random.randint(1, 6); n += 1
+            if x == 6: tot += n; cnt += 1; break
+            if x < 4: break          # path violates A: discard
+    return tot / cnt                 # ~1.5`});
+
+add("prob",{src:"sp",lvl:2,t:"Covariance of counts of 3s and 5s",
+q:`<p>Roll a die 5 times. Find Cov(number of 3s, number of 5s).</p>`,
+h:`Write each count as a sum of indicators over rolls. Different rolls are independent.`,
+a:`<p>X = Σ 1{roll i = 3}, Y = Σ 1{roll j = 5}. Across different rolls the indicators are independent (covariance 0). On the same roll they can't both be 1:</p>
+<div class="eq">Cov(1{=3}, 1{=5}) = 0 − (1/6)(1/6) = −1/36
+Cov(X, Y) = 5 · (−1/36) = −5/36</div>
+<p>General multinomial result: Cov(N<sub>i</sub>, N<sub>j</sub>) = −n·p<sub>i</sub>p<sub>j</sub>.</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"Expected maximum of three dice",
+q:`<p>Roll three fair dice. What is the expected value of the maximum?</p>`,
+h:`For a non-negative integer variable, E[M] = Σ P(M ≥ k).`,
+a:`<div class="eq">P(M ≥ k) = 1 − ((k−1)/6)³
+E[M] = Σ_{k=1..6} [1 − ((k−1)/6)³] = 6 − (0+1+8+27+64+125)/216 = 6 − 225/216</div>
+<p><span class="key">E[max] = 119/24 ≈ 4.96</span></p>`});
+
+add("prob",{src:"sp",lvl:1,t:"Expected maximum of n uniforms",
+q:`<p>X₁, …, Xₙ are iid Uniform(0, 1). Find E[max].</p>`,
+h:`CDF of the max is xⁿ.`,
+a:`<p>P(max ≤ x) = xⁿ, so the density is n·xⁿ⁻¹.</p>
+<div class="eq">E[max] = ∫₀¹ x · n xⁿ⁻¹ dx = n/(n+1)</div>
+<p>Similarly E[min] = 1/(n+1), and the k-th order statistic has mean k/(n+1). For Uniform(a, b): a + (b−a)·n/(n+1).</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"P(X > 0 and Y > X) for iid normals",
+q:`<p>X, Y are iid standard normal. Find P(X > 0 and Y > X).</p>`,
+h:`The joint density is rotationally symmetric, so probability = angle / 360°.`,
+a:`<p>X > 0 is the right half-plane (angles −90° to 90°). Y > X is above the line y = x (angles 45° to 225°). The overlap is 45° to 90°, a 45° wedge.</p>
+<p><span class="key">P = 45/360 = 1/8</span></p>`});
+
+add("prob",{src:"sp",lvl:1,t:"P(X + Y > 0 | X > 0)",
+q:`<p>X and Y are iid zero-mean normal. Compute P(X + Y > 0 | X > 0).</p>`,
+h:`Draw it. Both regions are wedges through the origin.`,
+a:`<p>X > 0: angles (−90°, 90°). X + Y > 0: angles (−45°, 135°). Intersection (−45°, 90°) = 135°.</p>
+<div class="eq">P(both) = 135/360 = 3/8
+P(X+Y>0 | X>0) = (3/8)/(1/2) = 3/4</div>`});
+
+add("prob",{src:"sp",lvl:3,t:"E[X | X + Y > 0] with correlation ρ",
+q:`<p>X, Y are standard normal with correlation ρ. What is E[X | X + Y > 0]?</p>`,
+h:`Let S = X + Y. Regress X on S, then use E[S | S > 0] for a half-normal.`,
+a:`<p>S = X + Y has variance 2 + 2ρ. Cov(X, S) = 1 + ρ, so E[X | S] = (1+ρ)/(2+2ρ) · S = S/2 (by symmetry too).</p>
+<div class="eq">E[S | S > 0] = σ_S·√(2/π) = √(2(1+ρ))·√(2/π)
+E[X | S > 0] = ½ · 2√((1+ρ)/π) = √((1+ρ)/π)</div>
+<p><span class="key">E[X | X+Y>0] = √((1+ρ)/π)</span>. Checks: ρ = 0 gives 1/√π ≈ 0.564; ρ = 1 gives √(2/π), which is E[X | X > 0]. (Simulated: ρ = 0.3 gives 0.646 vs formula 0.643.)</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"Conditional expectation of correlated variables",
+q:`<p>X and Y are correlated random variables. Given X = x, what is E[Y]?</p>`,
+h:`State your distributional assumption first.`,
+a:`<p>If (X, Y) is jointly normal:</p>
+<div class="eq">E[Y | X = x] = μ_Y + ρ·(σ_Y/σ_X)·(x − μ_X)
+Var(Y | X = x) = σ_Y²(1 − ρ²)</div>
+<p>The conditional distribution is itself normal. The slope ρσ<sub>Y</sub>/σ<sub>X</sub> is exactly the OLS slope of Y on X.</p>
+<p>Without normality, that formula is the <b>best linear predictor</b>, but the true E[Y | X] can be non-linear; you need the joint distribution. Good to mention: zero correlation does not imply E[Y | X] is constant (e.g. Y = X²).</p>`});
+
+add("prob",{src:"sp",lvl:2,t:"Number of red runs",
+q:`<p>a red balls and b blue balls are arranged in a random line. A maximal block of consecutive reds counts as one group. What is the expected number of red groups?</p>`,
+h:`Count group starts: position 1 if it's red, or any position that is red with a blue just before it.`,
+a:`<p>A red group starts at position 1 if that ball is red: probability a/(a+b).</p>
+<p>For each of the a+b−1 adjacent pairs, P(blue then red) = ab / ((a+b)(a+b−1)). Summing gives ab/(a+b).</p>
+<div class="eq">E[groups] = a/(a+b) + ab/(a+b) = a(b+1)/(a+b)</div>
+<p>Check: b = 0 gives 1 group. a = 1 gives 1.</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"8 boys and 9 girls in a row",
+q:`<p>8 boys and 9 girls line up randomly. What is the expected number of adjacent boy-girl pairs?</p>`,
+h:`16 adjacent pairs; each is mixed with the same probability.`,
+a:`<div class="eq">P(a given adjacent pair is mixed) = 2·8·9 / (17·16) = 9/17
+E = 16 · 9/17 = 144/17 ≈ 8.47</div>`});
+
+add("prob",{src:"sp",lvl:2,t:"Who can see the front of the line?",
+q:`<p>n people of distinct heights stand in a random line, all facing the front. A person can see the front if they are taller than everyone ahead of them. What is the expected number who can see the front? Does it converge as n grows, and how fast does it grow?</p>`,
+h:`Person k (counting from the front) can see if they are the tallest among the first k.`,
+a:`<p>P(person k is tallest among the first k) = 1/k.</p>
+<div class="eq">E = 1 + 1/2 + 1/3 + … + 1/n = H_n ≈ ln n + 0.577</div>
+<p>The harmonic series <b>diverges</b>, but only like ln n. Show it with ∫₁ⁿ dx/x = ln n bounding the sum. These are "records" (left-to-right maxima) of a random permutation.</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"100 doors, $1 behind each",
+q:`<p>There are 100 doors with $1 behind each. Each time you open a door chosen uniformly at random (repeats allowed); the money is taken the first time a door is opened. You open 100 times. What is the expected payout?</p>`,
+h:`Payout = number of distinct doors opened. Use an indicator per door.`,
+a:`<div class="eq">P(door never opened) = (99/100)^100 ≈ 0.366
+E = 100·(1 − 0.99^100) ≈ 63.40</div>
+<p>About 100(1 − 1/e).</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"Couples at a round table",
+q:`<p>n couples (2n people) sit randomly at a round table. What is the expected number of couples sitting next to each other?</p>`,
+h:`Fix one partner. How many of the remaining 2n − 1 seats are adjacent?`,
+a:`<div class="eq">P(a couple is adjacent) = 2/(2n − 1)
+E = n · 2/(2n − 1) = 2n/(2n − 1)</div>
+<p>It tends to 1 as n grows. Follow-up they may ask: in a straight row of 2n seats, P(a couple is adjacent) = 1/n, so the expectation is exactly 1.</p>`});
+
+add("prob",{src:"sp",lvl:1,t:"Expected 2s before the first 1",
+q:`<p>Roll a fair die until the first 1 appears. What is the expected number of 2s rolled before that?</p>`,
+h:`Ignore every roll that isn't a 1 or a 2.`,
+a:`<p>Only rolls showing 1 or 2 matter, and each is equally likely to be either. The number of 2s before the first 1 is Geometric (failures before success) with p = ½.</p>
+<p><span class="key">E = (1−p)/p = 1</span></p>`});
+
+add("prob",{src:"sp",lvl:2,t:"Weekend rain",
+q:`<p>The chance of rain is 20% on Saturday and 20% on Sunday. What is the chance it rains at some point this weekend? Follow-up: if the correlation between the two rain indicators is 0.6, what is it now?</p>`,
+h:`P(A or B) = P(A) + P(B) − P(A and B). For indicators, Cov = P(both) − P(A)P(B).`,
+a:`<p><b>No dependence info:</b> anywhere in <span class="key">[20%, 40%]</span> (perfect overlap to disjoint). If independent: 1 − 0.8² = 36%.</p>
+<div class="eq">Var(each indicator) = 0.2·0.8 = 0.16
+Cov = 0.6 · 0.16 = 0.096 = P(both) − 0.04  ⇒  P(both) = 0.136
+P(rain) = 0.4 − 0.136 = 0.264</div>
+<p>With ρ = 0.6: <span class="key">26.4%</span>.</p>`});
+
+add("prob",{src:"sp",lvl:2,t:"Roll until 6, paid 1/n",
+q:`<p>Roll a die until a 6 appears. If that happens on roll n, you receive 1/n. What is the fair price of the game?</p>`,
+h:`Use −ln(1 − x) = Σ xⁿ/n.`,
+a:`<div class="eq">E[1/N] = Σ (5/6)^(n−1)·(1/6)·(1/n)
+       = (1/6)(6/5) Σ (5/6)^n / n
+       = (1/5)·(−ln(1 − 5/6)) = ln(6)/5 ≈ 0.358</div>
+<p>Note E[1/N] ≠ 1/E[N] = 1/6 (Jensen).</p>`});
+
+add("prob",{src:"sp",lvl:2,t:"Biased random walk: reaching −1",
+q:`<p>An ant starts at 0 and each step moves left with probability p, right with probability 1 − p. What is the probability it ever reaches −1?</p>`,
+h:`Condition on the first step. Reaching −1 from +1 means reaching "one lower" twice.`,
+a:`<div class="eq">P = p + (1−p)·P²   ⇒   P = 1  or  P = p/(1−p)</div>
+<p><span class="key">P = 1 if p ≥ ½; P = p/(1−p) if p &lt; ½</span>. Choose the smaller root when drifting away (it's the minimal non-negative solution).</p>`});
+
+add("prob",{src:"sp",lvl:2,t:"Random walk with two endpoints",
+q:`<p>A random walk starts at k and stops at 0 or N. What is the probability of hitting N first? What is the expected duration?</p>`,
+h:`Gambler's ruin. For the fair walk, position is a martingale.`,
+a:`<p><b>Fair walk:</b> by optional stopping, k = N·P(hit N) ⇒ <span class="key">P = k/N</span>. Using X² − t as a martingale, <span class="key">E[duration] = k(N − k)</span>.</p>
+<p><b>Biased walk</b> (up with p, down with q = 1 − p):</p>
+<div class="eq">P(hit N first) = (1 − (q/p)^k) / (1 − (q/p)^N)</div>`});
+
+add("prob",{src:"sp",lvl:1,t:"Cov(Z, Z²)",
+q:`<p>Z is standard normal. What is Cov(Z, Z²)? Are Z and Z² independent?</p>`,
+h:`Odd moments of a symmetric distribution.`,
+a:`<p>Cov(Z, Z²) = E[Z³] − E[Z]E[Z²] = 0 − 0 = <span class="key">0</span>.</p>
+<p>But they are clearly <b>not independent</b>: Z² is a function of Z. Classic example that zero correlation ≠ independence.</p>`});
+
+add("prob",{src:"classic",lvl:1,t:"Coupon collector: all six faces",
+q:`<p>How many rolls of a fair die, on average, until every face has appeared?</p>`,
+h:`Sum the waiting times for each new face.`,
+a:`<div class="eq">E = 6/6 + 6/5 + 6/4 + 6/3 + 6/2 + 6/1 = 6·H_6 = 14.7</div>`});
+
+add("prob",{src:"classic",lvl:2,t:"Uniforms until the sum exceeds 1",
+q:`<p>Draw iid Uniform(0, 1) values until their sum exceeds 1. What is the expected number of draws?</p>`,
+h:`P(sum of first n is still ≤ 1) is the volume of a simplex.`,
+a:`<div class="eq">P(N > n) = P(U₁+…+Uₙ ≤ 1) = 1/n!
+E[N] = Σ_{n≥0} P(N > n) = Σ 1/n! = e</div>`});
+
+add("prob",{src:"classic",lvl:2,t:"Three points on a circle",
+q:`<p>Three points are chosen uniformly on a circle. What is the probability they all lie in some semicircle?</p>`,
+h:`For each point, ask: are the other two within the semicircle clockwise from it? These events are disjoint.`,
+a:`<p>For a fixed point, P(the other two are in the clockwise semicircle from it) = (½)² = ¼. The 3 events are disjoint, so P = 3·¼ = <span class="key">3/4</span>. General n points: n/2ⁿ⁻¹.</p>`});
+
+add("prob",{src:"classic",lvl:2,t:"Broken stick triangle",
+q:`<p>A stick is broken at two uniformly random points. What is the probability the three pieces form a triangle?</p>`,
+h:`All pieces must be shorter than ½.`,
+a:`<p>Plot the two break points in the unit square; the region where every piece is &lt; ½ has area ¼. <span class="key">P = 1/4</span>.</p>`});
+
+add("prob",{src:"classic",lvl:2,t:"Correlation bounds",
+q:`<p>corr(X, Y) = 0.9 and corr(Y, Z) = 0.9. What is the smallest possible corr(X, Z)?</p>`,
+h:`The 3×3 correlation matrix must be positive semidefinite.`,
+a:`<div class="eq">ρ_XZ ≥ ρ_XY·ρ_YZ − √((1−ρ_XY²)(1−ρ_YZ²)) = 0.81 − 0.19 = 0.62</div>
+<p>Geometric view: correlations are cosines of angles between vectors; 0.9 ≈ 25.8°, so X and Z are at most 51.7° apart, and cos 51.7° ≈ 0.62.</p>`});
+
+add("prob",{src:"classic",lvl:1,t:"Positive test, rare disease",
+q:`<p>A disease affects 1% of people. A test is 99% sensitive and 99% specific. You test positive. What's the chance you have the disease?</p>`,
+h:`Use 10,000 imaginary people.`,
+a:`<p>Of 10,000 people: 100 sick → 99 test positive; 9,900 healthy → 99 false positives.</p>
+<p><span class="key">P = 99/198 = 50%</span></p>`});
+
+add("prob",{src:"classic",lvl:2,t:"Penney's game: HHT vs THH",
+q:`<p>Flip a coin until either HHT or THH appears. Which is more likely to come first, and with what probability?</p>`,
+h:`Look at what must happen before the first HH.`,
+a:`<p>If the first two flips are HH, HHT is guaranteed to win (the next T completes it). Otherwise, a T appears before the first HH, so the first HH is preceded by a T, which is THH.</p>
+<p><span class="key">P(THH first) = 3/4</span></p>`});
+
+/* ===================== GAMES & OPTIMAL STOPPING ===================== */
+add("games",{src:"sp",lvl:1,t:"Die game with one re-roll",
+q:`<p>Roll a die and receive the face value in dollars. You may re-roll once, but then must take the second roll. What is the game worth? Follow-up: two re-rolls?</p>`,
+h:`Work backwards. Re-roll only if your current roll is below the value of continuing.`,
+a:`<p>The last roll is worth 3.5. Keep the first roll if it's 4, 5 or 6:</p>
+<div class="eq">V₂ = (4+5+6)/6 + (3/6)·3.5 = 2.5 + 1.75 = 4.25
+V₃ = (5+6)/6 + (4/6)·4.25 = 14/3 ≈ 4.67   (keep only 5 or 6)</div>`});
+
+add("games",{src:"sp",lvl:2,t:"Unlimited re-rolls, $1 each",
+q:`<p>Roll a die and receive the face value. You may re-roll as many times as you like, but each re-roll costs $1. What is the best strategy and the value?</p>`,
+h:`The game looks the same after every re-roll, so its value E satisfies a fixed-point equation. Money already paid is sunk.`,
+a:`<p>Guess the strategy "keep 4, 5, 6; re-roll otherwise":</p>
+<div class="eq">E = (1/6)·(6 + 5 + 4 + 3·(E − 1))  ⇒  6E = 12 + 3E  ⇒  E = 4</div>
+<p>Check: re-rolling is worth E − 1 = 3, so keep anything ≥ 3. A roll of 3 is exactly indifferent (keeping 3 also gives E = 4). <span class="key">Value $4; re-roll on 1 or 2</span>.</p>
+<p>Key point the interviewer wants: past payments don't change the decision; you maximise expected value from here.</p>`});
+
+add("games",{src:"sp",lvl:2,t:"Ten-sided die, pay $5 to play",
+q:`<p>You pay $5 to roll a 10-sided die (1–10) and receive N dollars. (a) What is the expected payoff? (b) After seeing the first roll you may re-roll once and take the second result. (c) Up to 10 rolls? (d) Up to 10,000 rolls?</p>`,
+h:`Let V_k be the gross value with k rolls left. V₁ = 5.5 and V_{k+1} = E[max(N, V_k)].`,
+a:`<div class="eq">V₁ = 5.5                       net 0.50
+V₂ = E[max(N, 5.5)] = 6.75     net 1.75   (keep 6–10)
+V₃ = 7.45 (keep 7–10), V₄ = 7.915, V₅ = 8.24 (keep 8–10)
+V₁₀ ≈ 9.087                    net ≈ 4.09
+V_k → 10                       net → 5    (10,000 rolls: only keep a 10)</div>
+<p>Once V &gt; 9 the rule is "keep only a 10", giving V<sub>k+1</sub> = 1 + 0.9·V<sub>k</sub>, which converges to 10. Mention the threshold moves up as more rolls remain.</p>
+<p><b>Variant:</b> if <i>every</i> roll costs $5, re-rolling is worth 5.5 − 5 = 0.5 &lt; any face, so you never re-roll; value stays 0.5.</p>`,
+code:String.raw`V = 5.5
+for k in range(2, 11):
+    V = sum(max(n, V) for n in range(1, 11)) / 10
+print(V - 5)   # 10 rolls: ~4.087`});
+
+add("games",{src:"sp",lvl:3,t:"100-card game, paid by fraction of red",
+q:`<p>A deck has 50 red and 50 black cards. You draw one at a time and may stop at any point (after at least one card). Your prize is $100 × (fraction of red among the cards you've drawn). What is the expected value with optimal play?</p>`,
+h:`Dynamic programming over (red drawn, black drawn). Compare "stop now" with the expected value of drawing one more.`,
+a:`<p>State (r, b) = red and black drawn so far. Stop value = r/(r+b). Continue value = weighted average of the next states. Take the max; at the end you must take 50/100.</p>
+<p><span class="key">Value ≈ $79.25</span>. Easy lower bound to sanity-check: stop immediately if the first card is red ($100 half the time).</p>
+<p>Same structure as the Green Book "dynamic card game" in the next question.</p>`,
+code:String.raw`from functools import lru_cache
+@lru_cache(None)
+def V(r, b):                 # r red, b black already drawn
+    R, B = 50 - r, 50 - b
+    stop = r / (r + b) if r + b else 0
+    if R + B == 0: return stop
+    go = (R * V(r + 1, b) + B * V(r, b + 1)) / (R + B)
+    return max(stop, go) if r + b else go
+print(100 * V(0, 0))         # ~79.25`});
+
+add("games",{src:"classic",lvl:3,t:"Green Book red-black card game",
+q:`<p>A shuffled 52-card deck: each red card you turn pays +$1, each black costs −$1. You can stop any time. What is the game worth?</p>`,
+h:`W(R, B) = value with R red and B black left. You can always keep going to the end for 0, so W ≥ 0.`,
+a:`<div class="eq">W(0, B) = 0,  W(R, 0) = R
+W(R, B) = max(0, [R(1 + W(R−1, B)) + B(−1 + W(R, B−1))] / (R+B))</div>
+<p><span class="key">W(26, 26) ≈ $2.62</span></p>`,
+code:String.raw`from functools import lru_cache
+@lru_cache(None)
+def W(R, B):
+    if R == 0: return 0
+    if B == 0: return R
+    return max(0, (R * (1 + W(R - 1, B)) + B * (-1 + W(R, B - 1))) / (R + B))
+print(W(26, 26))   # ~2.6245`});
+
+add("games",{src:"sp",lvl:2,t:"Kelly criterion",
+q:`<p>A game can be played infinitely many times and has positive expected value. Strategy A bets aggressively, strategy B conservatively. Which is better? How is Kelly's criterion derived, and what is the motivation?</p>`,
+h:`Maximise the expected log of wealth per round.`,
+a:`<p>Bet fraction f of wealth on a bet that pays b:1 with win probability p (q = 1 − p). Long-run growth rate:</p>
+<div class="eq">g(f) = p·ln(1 + b·f) + q·ln(1 − f)
+g'(f) = 0  ⇒  f* = (b·p − q) / b      (even money: f* = p − q)</div>
+<p><b>Motivation:</b> wealth after n rounds is a product of factors, so log wealth is a sum; by the law of large numbers it grows at rate g(f) almost surely. Kelly maximises that growth and eventually beats any other fixed fraction.</p>
+<p><b>For A vs B:</b> the one closer to f* grows faster. Betting more than f* adds risk and lowers growth; above about 2f* growth turns negative and you go broke despite positive EV. In practice people use half-Kelly because p is estimated with error.</p>`});
+
+add("games",{src:"sp",lvl:2,t:"Allocating to two predicted returns",
+q:`<p>You predict stock 1 will rise 2% and stock 2 will rise 1%. How do you allocate your capital?</p>`,
+h:`Return alone isn't enough. What else do you need?`,
+a:`<p>Don't just put everything in stock 1. Ask for (or state assumptions about) volatility, correlation, confidence in each forecast, costs and constraints.</p>
+<ul><li>Mean-variance: weights ∝ Σ⁻¹μ. If the stocks are uncorrelated with equal volatility, weights ∝ μ, so 2 : 1.</li>
+<li>If highly correlated, consider long 1 / short 2 to isolate the 1% spread.</li>
+<li>Scale total size by risk budget (Kelly-like), and account for forecast error, transaction costs and market beta.</li></ul>`});
+
+/* ===================== BRAINTEASERS & LOGIC ===================== */
+add("brain",{src:"sp",lvl:2,t:"25 horses, top 3",
+q:`<p>25 horses, 5 lanes, no timer. What is the minimum number of races to find the 3 fastest?</p>`,
+h:`5 heats, then a race of the winners. Which horses can still be top 3?`,
+a:`<ol><li>5 heats of 5 (5 races).</li>
+<li>Race the 5 heat winners (race 6). Say A1 > B1 > C1 > D1 > E1. A1 is the fastest overall.</li>
+<li>Remaining candidates for 2nd and 3rd: A2, A3, B1, B2, C1. Race them (race 7); the top 2 are 2nd and 3rd overall.</li></ol>
+<p><span class="key">7 races</span>.</p>`});
+
+add("brain",{src:"sp",lvl:2,t:"Josephus: 100 people",
+q:`<p>100 people stand in a circle. Person 1 kills the person to their left and passes the weapon to the next living person, and so on. Who survives?</p>`,
+h:`Solve for powers of 2 first.`,
+a:`<p>If n is a power of 2, person 1 survives (each lap halves the circle and the weapon returns to 1). Write n = 2ᵐ + L. After L kills, 2ᵐ people remain and the weapon is at person 2L + 1, who then survives.</p>
+<div class="eq">100 = 64 + 36   ⇒   survivor = 2·36 + 1 = 73</div>
+<p>Trick: rotate the binary representation left: 100 = 1100100₂ → 1001001₂ = 73.</p>`,
+code:String.raw`def josephus(n):          # every 2nd person eliminated, 1-indexed
+    L = n - (1 << (n.bit_length() - 1))
+    return 2 * L + 1`});
+
+add("brain",{src:"sp",lvl:2,t:"Paint a die so the sum is uniform 1–12",
+q:`<p>One die is a normal 1–6 die. The other is blank and you may write any number on each face. Make the sum of the two dice uniform on 1, 2, …, 12.</p>`,
+h:`The second die needs to pick a "block" of 6 with equal chance.`,
+a:`<p>Write <span class="key">0, 0, 0, 6, 6, 6</span>. With probability ½ you get 1–6, with probability ½ you get 7–12, each uniform: every sum has probability 1/12.</p>
+<p>Generating-function view: (x + … + x⁶)(3 + 3x⁶)/18 = (x + … + x¹²)/12.</p>`});
+
+add("brain",{src:"sp",lvl:2,t:"Subway escalators",
+q:`<p>A subway station is being built downtown. Should it have more escalators going up from the platform (exiting) or down to the platform (entering)?</p>`,
+h:`Think about how people arrive at each end, not about total flow.`,
+a:`<p>Total flow in and out may be balanced, but arrivals differ. People entering from the street arrive spread out (roughly Poisson). People exiting arrive in bursts when a train unloads, causing queues.</p>
+<p><span class="key">More escalators from the platform to the exit</span> to handle peak load. The interviewer is testing smooth vs clustered arrival processes.</p>`});
+
+add("brain",{src:"sp",lvl:3,t:"0/1 matrix with A² = 0",
+q:`<p>A is an N×N matrix with every entry 0 or 1, and A·A is the zero matrix. What is the maximum number of 1s in A?</p>`,
+h:`Treat A as a directed graph's adjacency matrix. A² = 0 means there is no path of length 2.`,
+a:`<p>No path of length 2 means no vertex has both an incoming and an outgoing edge (and no self-loops). So vertices split into "sources" S and "sinks" T, with edges only S → T. Max edges = |S|·|T| with |S| + |T| = N.</p>
+<p><span class="key">Maximum = ⌊N²/4⌋</span></p>`});
+
+add("brain",{src:"sp",lvl:2,t:"Subsets with no two consecutive numbers",
+q:`<p>How many subsets of {1, 2, …, n} contain no two consecutive numbers? Show it's a Fibonacci number.</p>`,
+h:`Condition on whether n is in the subset.`,
+a:`<p>If n is not chosen: any valid subset of {1…n−1}. If n is chosen: n−1 can't be, so any valid subset of {1…n−2}.</p>
+<div class="eq">f(n) = f(n−1) + f(n−2),  f(0) = 1,  f(1) = 2
+⇒ f(n) = F_{n+2}   (F₁ = F₂ = 1)</div>`});
+
+add("brain",{src:"sp",lvl:2,t:"Ants falling off a stick",
+q:`<p>n ants are placed at uniformly random points on a 1-metre stick, each facing left or right at random, walking at 1 m/min. When two ants meet they both turn around. What is the expected time until all ants have fallen off?</p>`,
+h:`Two ants bouncing off each other looks identical to them walking through each other.`,
+a:`<p>Swap labels at each collision: the picture is the same as ants passing through. So each "ghost" ant walks straight to its end; its time is its distance to that end, which is Uniform(0, 1), independent across ants.</p>
+<p>All are off at the max of n uniforms: <span class="key">E = n/(n+1) minutes</span>.</p>`});
+
+add("brain",{src:"sp",lvl:2,t:"∫₀^∞ e^(−x²/2) dx",
+q:`<p>Compute ∫₀^∞ e<sup>−x²/2</sup> dx.</p>`,
+h:`Relate to the standard normal density, or square it and use polar coordinates.`,
+a:`<p>The standard normal density integrates to 1, so ∫<sub>−∞</sub><sup>∞</sup> e<sup>−x²/2</sup> dx = √(2π). By symmetry:</p>
+<div class="eq">∫₀^∞ e^(−x²/2) dx = √(2π)/2 = √(π/2) ≈ 1.2533</div>
+<p>Be ready to prove √(2π) with I² = ∫∫ e<sup>−(x²+y²)/2</sup> dx dy = ∫₀^{2π}∫₀^∞ e<sup>−r²/2</sup> r dr dθ = 2π.</p>`});
+
+add("brain",{src:"sp",lvl:2,t:"Expected longest increasing subsequence",
+q:`<p>For a random permutation of n numbers, what is the expected length of the longest increasing subsequence?</p>`,
+h:`It grows like a power of n.`,
+a:`<p>Asymptotically <span class="key">≈ 2√n</span> (Vershik–Kerov, Logan–Shepp). Easy bound to argue: by Erdős–Szekeres, every sequence of length n has an increasing or decreasing subsequence of length ≥ √n. They may also ask you to code LIS in O(n log n) (see Coding).</p>`});
+
+add("brain",{src:"classic",lvl:1,t:"Burning ropes",
+q:`<p>Each of two ropes takes exactly 60 minutes to burn, but burns unevenly. How do you measure 45 minutes?</p>`,
+h:`Lighting both ends halves the time, however uneven the rope is.`,
+a:`<p>Light rope 1 at both ends and rope 2 at one end. When rope 1 finishes (30 min), light the other end of rope 2. It finishes 15 minutes later: <span class="key">45 minutes</span>.</p>`});
+
+add("brain",{src:"classic",lvl:2,t:"The lost airline seat",
+q:`<p>100 passengers board in order. The first has lost their ticket and sits in a random seat. Each later passenger takes their own seat if free, otherwise a random free seat. What is the probability the last passenger gets their own seat?</p>`,
+h:`The game ends the moment someone sits in seat 1 or seat 100. Which is more likely to be chosen first?`,
+a:`<p>At every random choice, seats 1 and 100 are symmetric. Whichever is taken first decides the outcome. <span class="key">P = 1/2</span>.</p>`});
+
+add("brain",{src:"classic",lvl:2,t:"12 coins, one counterfeit",
+q:`<p>12 coins, one is counterfeit and either heavier or lighter. Using a balance scale three times, find the fake coin and whether it's heavier or lighter.</p>`,
+h:`24 possibilities, 27 outcomes from 3 weighings. Start with 4 vs 4.`,
+a:`<p>Weigh 4 vs 4. If balanced, the fake is among the remaining 4 and you have 2 weighings (weigh 3 of them vs 3 known-good coins, etc.). If unbalanced, you know 4 "possibly heavy" and 4 "possibly light"; weigh mixes like (H1 H2 L1) vs (H3 L2 good) so each outcome cuts the candidates to ≤ 3.</p>
+<p>The key idea to say aloud: each weighing has 3 outcomes, so 3 weighings separate up to 27 cases, and 24 &lt; 27.</p>`});
+/* ===================== STATISTICS & INFERENCE ===================== */
+add("stats",{src:"sp",lvl:1,t:"Estimate p for a biased coin, with a confidence interval",
+q:`<p>You have a biased coin with unknown P(heads) = p. Design an experiment to estimate p and derive a confidence interval.</p>`,
+h:`MLE, then the CLT. Mention when the normal approximation breaks.`,
+a:`<p>Flip n times, observe k heads. The MLE is <b>p̂ = k/n</b> (unbiased, variance p(1−p)/n).</p>
+<div class="eq">Wald 95% CI:  p̂ ± 1.96·√(p̂(1 − p̂)/n)</div>
+<ul><li><b>Small n or p near 0/1:</b> Wald undercovers. Use the Wilson score interval or the exact Clopper–Pearson interval.</li>
+<li><b>Choosing n:</b> margin m needs n ≈ 1.96²·p(1−p)/m² ≤ 0.96/m². For ±1% at 95%, n ≈ 9,604.</li>
+<li>Design points: independent flips, same conditions, fix n in advance (don't stop when the result looks good).</li></ul>`});
+
+add("stats",{src:"sp",lvl:1,t:"Type I vs Type II errors in trading",
+q:`<p>Explain the difference between Type I and Type II errors. How would you choose the significance level when testing a trading strategy?</p>`,
+h:`What does each mistake cost you in money? How many strategies have you tried?`,
+a:`<ul><li><b>Type I (false positive):</b> reject a true null. Here: you deploy a strategy that has no real edge and lose money and capital.</li>
+<li><b>Type II (false negative):</b> fail to reject a false null. Here: you discard a strategy that does work (opportunity cost).</li></ul>
+<p><b>Choosing α:</b> weigh the costs. False positives are usually more expensive, so use stricter levels (0.01 or lower). Most important: <b>correct for multiple testing</b>. If you backtest 100 ideas at α = 0.05, about 5 will look good by chance. Use Bonferroni, Benjamini–Hochberg (FDR), a deflated Sharpe ratio, or a t-stat hurdle around 3, plus true out-of-sample tests. Power matters too: low-power tests miss real but small edges.</p>`});
+
+add("stats",{src:"sp",lvl:1,t:"CI for a normal mean with unknown variance",
+q:`<p>Construct a confidence interval for the mean of a normal sample when the variance is unknown.</p>`,
+h:`Studentize.`,
+a:`<div class="eq">x̄ ± t_{n−1, α/2} · s/√n,   s² = Σ(xᵢ − x̄)²/(n − 1)</div>
+<p>Because (x̄ − μ)/(s/√n) follows a t distribution with n − 1 degrees of freedom. For large n, t ≈ z (1.96 at 95%). Without normality, the CLT gives an approximate version. Interpretation: 95% of intervals built this way contain μ, not "μ is in this interval with 95% probability".</p>`});
+
+add("stats",{src:"sp",lvl:2,t:"Estimate a and b for Uniform[a, b]",
+q:`<p>Data come from Uniform[a, b]. How do you estimate a and b? Go into the details.</p>`,
+h:`Write the likelihood. It is zero if any point is outside [a, b].`,
+a:`<div class="eq">L(a, b) = (b − a)^(−n)  if a ≤ min xᵢ and b ≥ max xᵢ, else 0</div>
+<p>L increases as the interval shrinks, so the MLE is <span class="key">â = min xᵢ, b̂ = max xᵢ</span>. Both are biased inward: E[max] = b − (b−a)/(n+1).</p>
+<p>Unbiased versions: b̂ = max + (max − min)/(n − 1), â = min − (max − min)/(n − 1). Method of moments (x̄ ± √3·s) is an alternative but less efficient. Note the MLE converges at rate 1/n, faster than the usual 1/√n.</p>`});
+
+add("stats",{src:"sp",lvl:1,t:"Sharpe ratio 1: chance of losing over 4 years",
+q:`<p>An asset has an annual Sharpe ratio of 1. What is the probability it has lost money after 4 years?</p>`,
+h:`Mean scales with T, standard deviation with √T.`,
+a:`<p>Over 4 years: mean = 4μ, SD = 2σ, so the 4-year Sharpe is 2.</p>
+<div class="eq">P(loss) ≈ Φ(−4μ / 2σ) = Φ(−2) ≈ 2.3%</div>
+<p>Assumptions to state: iid annual returns, normal (or CLT), Sharpe measured on excess returns that you treat as the P&amp;L, no fat tails.</p>`});
+
+add("stats",{src:"sp",lvl:1,t:"Too many features: overfitting",
+q:`<p>Your model has far too many features relative to observations and overfits. What do you do?</p>`,
+h:`Reduce variance: fewer effective parameters or more data.`,
+a:`<ul><li>Regularisation: ridge (shrinks), lasso (selects), elastic net.</li>
+<li>Feature selection (domain knowledge, stability selection) or dimensionality reduction (PCA).</li>
+<li>Cross-validation to pick λ; in finance use time-ordered / purged CV, never random shuffles.</li>
+<li>Simpler model classes, more data, ensembling.</li></ul>`});
+
+add("stats",{src:"sp",lvl:2,t:"Zero-mean returns: higher or lower after n days?",
+q:`<p>Daily returns over n days have mean zero. Is the price on day n likely higher or lower than on day 1?</p>`,
+h:`Arithmetic vs geometric. Jensen's inequality on log(1 + r).`,
+a:`<p>If the daily arithmetic mean is 0 and returns are independent, E[P<sub>n</sub>] = P<sub>1</sub>. But E[log(1 + r)] ≈ −σ²/2 &lt; 0, so log price drifts down.</p>
+<p><span class="key">The typical (median) outcome is lower</span>, and P(P<sub>n</sub> &lt; P<sub>1</sub>) &gt; ½, while the mean stays equal because of a few large winners. Example: +10% then −10% leaves you at 0.99. This is "volatility drag".</p>`});
+
+/* ===================== REGRESSION ===================== */
+add("reg",{src:"sp",lvl:1,t:"OLS assumptions and the estimator",
+q:`<p>Explain the assumptions of linear regression and derive the OLS estimator.</p>`,
+h:`Minimise ‖y − Xβ‖². Then list what you need for unbiasedness vs for inference.`,
+a:`<div class="eq">min ‖y − Xβ‖²  ⇒  Xᵀ(y − Xβ) = 0  ⇒  β̂ = (XᵀX)⁻¹Xᵀy
+Var(β̂ | X) = σ²(XᵀX)⁻¹</div>
+<ul><li>Linearity in parameters.</li>
+<li>Full rank X (no perfect multicollinearity).</li>
+<li>Exogeneity: E[ε | X] = 0 → unbiased.</li>
+<li>Homoscedastic, uncorrelated errors → OLS is BLUE (Gauss–Markov), usual SEs valid.</li>
+<li>Normal errors → exact t and F tests in small samples.</li></ul>`});
+
+add("reg",{src:"sp",lvl:1,t:"Multicollinearity",
+q:`<p>What is collinearity, what does it do, and how do you fix it?</p>`,
+h:`Look at what happens to (XᵀX)⁻¹.`,
+a:`<p>Predictors are highly correlated, so XᵀX is near-singular. Coefficients stay unbiased but their <b>variances blow up</b>: unstable estimates, wrong signs, large SEs, insignificant t-stats despite a good overall fit. Diagnose with VIF = 1/(1 − R²<sub>j</sub>) or condition numbers.</p>
+<p>Fixes: drop or combine features, PCA / principal-component regression, ridge, collect more varied data. If you only care about prediction, it may not matter.</p>`});
+
+add("reg",{src:"sp",lvl:1,t:"Heteroscedasticity",
+q:`<p>What is heteroscedasticity, how do you detect it, and how do you handle it?</p>`,
+h:`OLS is still unbiased. What breaks?`,
+a:`<p>Error variance depends on X (e.g. bigger stocks have bigger moves). OLS remains unbiased, but standard errors are wrong and OLS is no longer efficient.</p>
+<ul><li><b>Detect:</b> residual-vs-fitted plots, Breusch–Pagan or White tests.</li>
+<li><b>Handle:</b> heteroscedasticity-robust (White / HC) standard errors, weighted least squares if you can model the variance, or transform (logs, scaling by volatility).</li></ul>`});
+
+add("reg",{src:"sp",lvl:2,t:"Duplicate every row",
+q:`<p>You duplicate every observation in a regression. What happens to β̂, R², the t-statistics and p-values? Why?</p>`,
+h:`XᵀX and Xᵀy both double. What about the residual variance estimate?`,
+a:`<p>β̂ = (2XᵀX)⁻¹(2Xᵀy) is <b>unchanged</b>. Residuals are the same, so <b>R² is unchanged</b>.</p>
+<div class="eq">σ̂²_dup = 2·RSS/(2n − p),   Var(β̂)_dup = σ̂²_dup·(2XᵀX)⁻¹
+SE_dup / SE = √((n − p)/(2n − p)) ≈ 1/√2</div>
+<p>So <span class="key">t-stats grow by about √2 and p-values shrink</span>. That is fake precision: the duplicates add no information, but OLS assumes independent errors. Same problem as overlapping samples in finance.</p>`});
+
+add("reg",{src:"sp",lvl:2,t:"Duplicate every column",
+q:`<p>What if you duplicate the columns instead, so X becomes n × 2p?</p>`,
+h:`Is [X X]ᵀ[X X] invertible?`,
+a:`<p>Perfect multicollinearity: the Gram matrix is singular, so β̂ is not unique. Any split b₁ + b₂ = β̂ fits equally well. Fitted values and R² are unchanged. Software will drop a column, return NaN or use a pseudo-inverse; the minimum-norm (and ridge) solution splits it evenly, β̂/2 on each copy.</p>`});
+
+add("reg",{src:"sp",lvl:3,t:"Measurement error in X vs in Y",
+q:`<p>In simple regression, suppose you observe X̃ = X + Gaussian noise instead of X. What happens to β̂? Prove it. What if the noise is in Y instead? Why the asymmetry?</p>`,
+h:`β̂ = Cov(X̃, Y)/Var(X̃). Expand both.`,
+a:`<p>Model y = βx + ε, observe x̃ = x + u with u independent, variance σ<sub>u</sub>².</p>
+<div class="eq">plim β̂ = Cov(x̃, y)/Var(x̃) = β·σ_x² / (σ_x² + σ_u²)</div>
+<p><b>Attenuation bias:</b> β̂ shrinks toward 0 by the reliability ratio λ = σ<sub>x</sub>²/(σ<sub>x</sub>² + σ<sub>u</sub>²).</p>
+<p><b>Noise in Y:</b> y + v just adds to ε; β̂ stays <b>unbiased</b>, only the SE grows.</p>
+<p><b>Why:</b> OLS minimises vertical (y-direction) errors and assumes the regressor is measured exactly and uncorrelated with the error. Noise in x̃ makes the regressor correlated with the composite error (−βu), an endogeneity problem. Fixes: instrumental variables, errors-in-variables / Deming / total least squares.</p>`});
+
+add("reg",{src:"sp",lvl:2,t:"Forward and reverse regression slopes",
+q:`<p>Regressing y on x gives slope b = 1. Regressing x on y gives slope c. What values can c take?</p>`,
+h:`Write both slopes in terms of ρ and the standard deviations, then multiply.`,
+a:`<div class="eq">b = ρ·σ_y/σ_x,   c = ρ·σ_x/σ_y   ⇒   b·c = ρ²</div>
+<p>With b = 1 (so ρ &gt; 0): c = ρ² ∈ <span class="key">(0, 1]</span>. c = 1 only if the fit is perfect. Common wrong answer: c = 1/b.</p>`});
+
+add("reg",{src:"sp",lvl:2,t:"Adding a regressor with zero coefficient",
+q:`<p>Regressing y on x₁ gives β. Regressing y on (x₁, x₂) gives β₁, β₂. If β₂ = 0, does β₁ = β?</p>`,
+h:`Think of the two optimisation problems, or the omitted-variable formula.`,
+a:`<p><span class="key">Yes</span> (same intercept treatment). The multiple regression minimises over all (b₁, b₂); its minimiser has b₂ = 0, so it is also the minimiser over the restricted set b₂ = 0, which is exactly the simple regression.</p>
+<p>Formula view: β = β₁ + β₂·δ, where δ is the slope of x₂ on x₁. With β₂ = 0, β = β₁.</p>`});
+
+add("reg",{src:"sp",lvl:2,t:"Ridge and lasso",
+q:`<p>Give the ridge solution in closed form. Why doesn't lasso have one? Discuss bias-variance.</p>`,
+h:`Add λ‖β‖² vs λ‖β‖₁ to the objective.`,
+a:`<div class="eq">Ridge: β̂ = (XᵀX + λI)⁻¹Xᵀy
+Lasso (orthonormal X): β̂ⱼ = sign(β̂ⱼ^OLS)·max(|β̂ⱼ^OLS| − λ/2, 0)   (soft-thresholding)</div>
+<p>Lasso's ℓ₁ penalty isn't differentiable at 0, so in general it is solved by coordinate descent; it sets some coefficients exactly to 0 (feature selection). Ridge shrinks all coefficients and handles collinearity well. Both add bias and reduce variance; choose λ by (time-series) cross-validation. Standardise features first.</p>`});
+
+add("reg",{src:"sp",lvl:2,t:"Monthly vs annual correlation (Simpson's paradox)",
+q:`<p>Two time series. Is it possible that their correlation is positive within every month but negative over the whole year? Or negative within each month but positive overall?</p>`,
+h:`Separate a between-month component from a within-month component.`,
+a:`<p><span class="key">Yes, both</span>. Write X = aM + bR and Y = cM + dR, where M is the month effect and R the within-month variation, independent.</p>
+<ul><li>Within a month M is fixed, so the sign of the correlation is the sign of b·d.</li>
+<li>Over the year, if |a|, |c| are much larger than |b|, |d|, the sign is the sign of a·c.</li></ul>
+<p>E.g. b = d (positive within each month) but c = −a with large |a| (one trends up across months, the other down) gives a negative annual correlation. Lesson: pooled correlations can be dominated by trends; aggregation level matters.</p>`});
+
+/* ===================== TIME SERIES & FINANCE ===================== */
+add("ts",{src:"sp",lvl:2,t:"Testing for a unit root",
+q:`<p>A time series appears to have a unit root. How would you test for stationarity, and what are the implications for modelling?</p>`,
+h:`Two tests with opposite nulls. What goes wrong if you regress one random walk on another?`,
+a:`<ul><li><b>ADF test:</b> null = unit root. A large p-value means you can't reject non-stationarity.</li>
+<li><b>KPSS test:</b> null = stationary. Use both; they have opposite nulls, so agreement is more convincing. Also Phillips–Perron.</li>
+<li>If there is a unit root, <b>difference</b> the series (prices → returns) before ARMA-type modelling.</li>
+<li>Regressing one I(1) series on another gives <b>spurious regression</b> (high R², meaningless t-stats).</li>
+<li>If two I(1) series have a stationary combination they are <b>cointegrated</b> (Engle–Granger, Johansen); model with an error-correction model. Basis of pairs trading.</li></ul>`});
+
+add("ts",{src:"sp",lvl:1,t:"Testing returns for autocorrelation",
+q:`<p>Given stock return data, how would you test for autocorrelation?</p>`,
+h:`One lag vs many lags; raw data vs regression residuals.`,
+a:`<ul><li>Plot the sample ACF/PACF; under no autocorrelation each lag is approximately N(0, 1/n), so bands at ±1.96/√n.</li>
+<li><b>Ljung–Box</b> Q-test: joint test across many lags.</li>
+<li><b>Durbin–Watson:</b> first-order autocorrelation in regression residuals (≈2 means none). Breusch–Godfrey for higher orders.</li>
+<li>Watch for multiple-testing across lags, volatility clustering (test squared returns too) and overlapping-return effects.</li></ul>`});
+
+add("ts",{src:"sp",lvl:2,t:"GBM: probability of finishing above K",
+q:`<p>A stock follows geometric Brownian motion with price S₀, drift μ and volatility σ. Derive P(S<sub>T</sub> &gt; K).</p>`,
+h:`Apply Itô to log S.`,
+a:`<div class="eq">S_T = S₀·exp((μ − σ²/2)T + σ√T·Z)
+P(S_T > K) = P(Z > [ln(K/S₀) − (μ − σ²/2)T] / (σ√T))
+          = Φ( [ln(S₀/K) + (μ − σ²/2)T] / (σ√T) )</div>
+<p>Under the risk-neutral measure (μ = r) this is N(d₂), the probability that a call finishes in the money.</p>`});
+
+add("ts",{src:"sp",lvl:2,t:"Black–Scholes price and Greeks in code",
+q:`<p>Implement a function that computes the Black–Scholes call price and its Greeks.</p>`,
+h:`d₁, d₂, then N and φ. Handle edge cases (T = 0, σ = 0).`,
+a:`<div class="eq">d₁ = [ln(S/K) + (r + σ²/2)T] / (σ√T),   d₂ = d₁ − σ√T
+C = S·N(d₁) − K·e^(−rT)·N(d₂)
+Δ = N(d₁)   Γ = φ(d₁)/(Sσ√T)   Vega = S·φ(d₁)·√T
+Θ = −S·φ(d₁)·σ/(2√T) − rK·e^(−rT)·N(d₂)   ρ = K·T·e^(−rT)·N(d₂)</div>
+<p>Put via parity: P = C − S + K·e<sup>−rT</sup>. Mention numerical stability near T → 0 and deep in/out of the money, and vectorising with NumPy for many options.</p>`,
+code:String.raw`from math import log, sqrt, exp, erf, pi
+
+def N(x):   return 0.5 * (1 + erf(x / sqrt(2)))
+def phi(x): return exp(-x * x / 2) / sqrt(2 * pi)
+
+def bs_call(S, K, T, r, sigma):
+    if T <= 0 or sigma <= 0:                       # expiry / no vol: intrinsic
+        return max(S - K * exp(-r * max(T, 0)), 0.0), None
+    sq = sigma * sqrt(T)
+    d1 = (log(S / K) + (r + 0.5 * sigma ** 2) * T) / sq
+    d2 = d1 - sq
+    price = S * N(d1) - K * exp(-r * T) * N(d2)
+    greeks = {
+        "delta": N(d1),
+        "gamma": phi(d1) / (S * sq),
+        "vega":  S * phi(d1) * sqrt(T),
+        "theta": -S * phi(d1) * sigma / (2 * sqrt(T)) - r * K * exp(-r * T) * N(d2),
+        "rho":   K * T * exp(-r * T) * N(d2),
+    }
+    return price, greeks`});
+
+add("ts",{src:"sp",lvl:1,t:"Execution: slippage and intraday volume",
+q:`<p>Does your algorithm account for slippage? When during the day is trading volume highest?</p>`,
+h:`Later rounds ask this; have a short answer ready.`,
+a:`<ul><li><b>Slippage:</b> the gap between the decision price and the fill (spread + market impact + delay). Model it in backtests (e.g. half-spread plus impact ∝ σ·√(order size / ADV)), and size or schedule trades (TWAP/VWAP) to limit it. A strategy whose edge is smaller than its costs isn't real.</li>
+<li><b>Volume:</b> U-shaped intraday: high at the open, low around midday, highest into the close (closing auction, index rebalancing).</li></ul>`});
+
+add("ts",{src:"sp",lvl:1,t:"Sharpe ratio and annualising",
+q:`<p>Define the Sharpe ratio. How do you annualise a daily Sharpe? What are its limitations?</p>`,
+h:`Mean scales with time, standard deviation with its square root.`,
+a:`<div class="eq">Sharpe = (mean return − risk-free) / SD(return)
+Annual ≈ daily Sharpe × √252</div>
+<p>The √252 rule assumes iid returns; autocorrelation breaks it. Limitations: ignores skew and fat tails, is noisy to estimate (SE ≈ √((1 + SR²/2)/T) in years), and can be inflated by overfitting or smoothed returns.</p>`});
+
+/* ===================== SIMULATION ===================== */
+add("sim",{src:"sp",lvl:2,t:"Generate any distribution from uniforms",
+q:`<p>You have Uniform(0, 1) random numbers. How do you generate samples from an arbitrary distribution?</p>`,
+h:`Two standard methods, and when each works.`,
+a:`<ul><li><b>Inverse CDF:</b> X = F⁻¹(U). Works whenever F⁻¹ is computable (e.g. exponential: −ln(1−U)/λ).</li>
+<li><b>Acceptance–rejection:</b> pick an easy proposal g with f(x) ≤ c·g(x). Draw Y ~ g and U; accept Y if U ≤ f(Y)/(c·g(Y)); otherwise retry. Acceptance rate = 1/c.</li></ul>
+<p>Example: half-normal from Exp(1) proposal, c = √(2e/π) ≈ <b>1.32</b>, then attach a random sign to get N(0, 1).</p>`});
+
+add("sim",{src:"sp",lvl:1,t:"Normal from Uniform(0, 1)",
+q:`<p>How do you generate a standard normal from Uniform(0, 1)?</p>`,
+h:`Box–Muller uses two uniforms.`,
+a:`<div class="eq">R = √(−2 ln U₁),  Θ = 2πU₂
+Z₁ = R cos Θ,  Z₂ = R sin Θ   (two iid N(0,1))</div>
+<p>Why: (Z₁, Z₂) has a rotation-invariant density; R² ~ Exp(½), angle uniform. Alternatives: inverse CDF with a rational approximation, Marsaglia polar method (no trig), or the rough sum of 12 uniforms − 6.</p>`,
+code:String.raw`import math, random
+def box_muller():
+    u1, u2 = random.random(), random.random()
+    r = math.sqrt(-2 * math.log(1 - u1))      # 1 - u1 avoids log(0)
+    return r * math.cos(2 * math.pi * u2), r * math.sin(2 * math.pi * u2)`});
+
+add("sim",{src:"sp",lvl:3,t:"Two correlated Bernoullis from two uniforms",
+q:`<p>Using two Uniform(0, 1) draws, generate two Bernoulli(p) variables with correlation ρ.</p>`,
+h:`Copy X with probability ρ, otherwise draw Y independently. Reuse the leftover randomness of U₂.`,
+a:`<p>For 0 ≤ ρ ≤ 1: X = 1{U₁ &lt; p}. If U₂ &lt; ρ, set Y = X. Otherwise Y = 1{(U₂ − ρ)/(1 − ρ) &lt; p}; given U₂ ≥ ρ, that rescaled value is again Uniform(0, 1), independent of X.</p>
+<div class="eq">Cov(X, Y) = ρ·Var(X) + (1 − ρ)·0  ⇒  Corr = ρ</div>
+<p>For negative ρ with p = ½, copy 1 − X instead. With different p's, the achievable range of correlation is limited (Fréchet bounds).</p>`,
+code:String.raw`import random
+def corr_bernoulli(p, rho):          # same p, 0 <= rho <= 1
+    u1, u2 = random.random(), random.random()
+    x = int(u1 < p)
+    if u2 < rho:
+        y = x
+    else:
+        y = int((u2 - rho) / (1 - rho) < p)
+    return x, y`});
+
+add("sim",{src:"sp",lvl:2,t:"Pick a uniform element from an unknown-length list",
+q:`<p>Write code to pick a uniformly random element from a list (stream) whose length you don't know in advance, in one pass.</p>`,
+h:`Reservoir sampling. Replace the current pick with the i-th item with probability 1/i.`,
+a:`<p>Proof by induction: after i items, each has probability 1/i of being held. Item j ≤ i survives to the end with probability (1/j)·(j/(j+1))·…·((n−1)/n) = 1/n. For k samples, keep a reservoir of size k and replace a random slot with probability k/i.</p>`,
+code:String.raw`import random
+def reservoir(stream):
+    pick = None
+    for i, x in enumerate(stream, 1):
+        if random.random() < 1 / i:
+            pick = x
+    return pick`});
+
+add("sim",{src:"sp",lvl:2,t:"Variance reduction in Monte Carlo",
+q:`<p>What variance reduction techniques do you know? When does each help?</p>`,
+h:`Name four and give one line each.`,
+a:`<ul><li><b>Antithetic variates:</b> pair U with 1 − U (or Z with −Z); helps when the payoff is monotone.</li>
+<li><b>Control variates:</b> subtract a correlated quantity with known mean (e.g. a vanilla option with a closed-form price).</li>
+<li><b>Importance sampling:</b> sample more where the payoff matters (rare events, deep OTM), reweight by the likelihood ratio.</li>
+<li><b>Stratified sampling / moment matching / quasi-Monte Carlo</b> (Sobol sequences).</li></ul>
+<p>Related question in your notes: price a double-barrier knock-out call by simulating paths; use a Brownian-bridge correction for barrier crossings between steps, plus antithetics/control variates.</p>`});
+
+add("sim",{src:"sp",lvl:3,t:"Unfriendly seating",
+q:`<p>n seats in a row. People enter one at a time and pick a uniformly random seat that is empty and not next to an occupied seat, until no such seat is left. What is the expected number of occupied seats? How would you code it?</p>`,
+h:`The first person splits the row into two independent smaller problems.`,
+a:`<p>If the first person sits in seat k, seats k−1 and k+1 are blocked, leaving rows of length k−2 and n−k−1.</p>
+<div class="eq">E_n = 1 + (1/n)·Σ_{k=1..n} (E_{k−2} + E_{n−k−1}) = 1 + (2/n)·Σ_{j=0..n−2} E_j
+E_0 = 0, E_1 = 1, E_2 = 1, E_3 = 5/3</div>
+<p>For large n, <span class="key">E_n / n → (1 − e⁻²)/2 ≈ 0.432</span>. Code it with a running prefix sum: O(n).</p>`,
+code:String.raw`def expected_seated(n):
+    E = [0.0, 1.0]
+    pre = 0.0                      # E[0] + ... + E[m-2]
+    for m in range(2, n + 1):
+        pre += E[m - 2]
+        E.append(1 + 2 * pre / m)
+    return E[n]`});
+
+/* ===================== CODING ===================== */
+add("code",{src:"sp",lvl:2,t:"ATM queue order",
+q:`<p>amounts[i] is how much person i wants to withdraw, e.g. [2, 5, 3, 10]. The ATM gives at most k per visit (say k = 2). If someone still needs money, they go to the back of the queue. Return the order in which people finish. (A brute-force simulation timed out on 2 of 15 test cases.)</p>`,
+h:`Person i needs ceil(amounts[i]/k) visits. In which round does each person finish, and who goes first within a round?`,
+a:`<p>Everyone finishes in round ceil(aᵢ/k), and within a round the original order is preserved. So sort by (visits, index): <b>O(n log n)</b> (or bucket by visits for O(n + max)). Example: visits [1, 3, 2, 5] → order [0, 2, 1, 3].</p>`,
+code:String.raw`def atm_order(amounts, k):
+    visits = [(-(-a // k), i) for i, a in enumerate(amounts)]   # ceil(a/k)
+    return [i for _, i in sorted(visits)]`});
+
+add("code",{src:"sp",lvl:1,t:"Kth largest element, and its index (LC 215)",
+q:`<p>Find the k-th largest element of an array. Follow-up: how do you also record its index?</p>`,
+h:`Min-heap of size k, or quickselect.`,
+a:`<p>Keep a min-heap of the k largest seen; the top is the answer. Push (value, index) tuples to keep indices. <b>O(n log k)</b> time, O(k) space. Quickselect is O(n) average.</p>`,
+code:String.raw`import heapq
+def kth_largest(nums, k):
+    h = []
+    for i, x in enumerate(nums):
+        heapq.heappush(h, (x, i))
+        if len(h) > k:
+            heapq.heappop(h)
+    return h[0]          # (value, index)`});
+
+add("code",{src:"sp",lvl:3,t:"Max subarray sum no larger than k",
+q:`<p>Given an integer array (may contain negatives) and k, find the maximum subarray sum that is ≤ k.</p>`,
+h:`Subarray sum = pre[j] − pre[i]. For each j you want the smallest earlier prefix ≥ pre[j] − k.`,
+a:`<p>Keep sorted prefix sums; binary-search for the smallest prefix ≥ pre − k. With a balanced BST / SortedList this is <b>O(n log n)</b>; bisect.insort is O(n) per insert but fine to write in an interview. LC 363 is the 2D version (fix row pairs, run this on column sums).</p>`,
+code:String.raw`import bisect
+def max_sum_at_most_k(a, k):
+    best, pre, seen = float("-inf"), 0, [0]
+    for x in a:
+        pre += x
+        i = bisect.bisect_left(seen, pre - k)    # smallest prefix >= pre - k
+        if i < len(seen):
+            best = max(best, pre - seen[i])
+        bisect.insort(seen, pre)
+    return best`});
+
+add("code",{src:"sp",lvl:2,t:"Stock trading series (LC 121, 122, 123, 188)",
+q:`<p>Max profit from stock prices with: one transaction; unlimited transactions; at most two; at most k.</p>`,
+h:`State machine DP: buy[j] = best cash while holding after j buys; sell[j] = best cash not holding after j sells.`,
+a:`<ul><li>121 (one trade): track min price so far. O(n).</li>
+<li>122 (unlimited): sum every positive daily move.</li>
+<li>123 / 188 (at most k): DP below, O(nk). If 2k ≥ n, it's the unlimited case.</li></ul>`,
+code:String.raw`def max_profit(k, prices):
+    if not prices: return 0
+    if 2 * k >= len(prices):                       # effectively unlimited
+        return sum(max(0, b - a) for a, b in zip(prices, prices[1:]))
+    buy = [float("-inf")] * (k + 1)
+    sell = [0] * (k + 1)
+    for p in prices:
+        for j in range(1, k + 1):
+            buy[j] = max(buy[j], sell[j - 1] - p)
+            sell[j] = max(sell[j], buy[j] + p)
+    return sell[k]`});
+
+add("code",{src:"sp",lvl:3,t:"Buy one or sell one share per day, no shorting",
+q:`<p>Each day you may buy one share, sell one share, or do nothing. You can't short. Maximise profit.</p>`,
+h:`Greedy with a min-heap. When you sell at p against a cheaper earlier price, push p back so the sale can be "upgraded" later.`,
+a:`<p>For each price p: if the cheapest available price in the heap is below p, take profit p − top, and push p (so a later higher price can effectively extend this trade). Always push p as a potential buy. <b>O(n log n)</b>. A DP over (day, shares held) also works in O(n²).</p>`,
+code:String.raw`import heapq
+def max_profit_one_share_per_day(prices):
+    h, profit = [], 0
+    for p in prices:
+        if h and h[0] < p:
+            profit += p - heapq.heappop(h)
+            heapq.heappush(h, p)      # allows undoing this sale later
+        heapq.heappush(h, p)
+    return profit`});
+
+add("code",{src:"sp",lvl:1,t:"Count subarrays with sum < k (positive integers)",
+q:`<p>All elements are positive. Count subarrays whose sum is strictly less than k. Your first solution passes; now make it O(n).</p>`,
+h:`Positive numbers mean the window sum is monotone: sliding window.`,
+a:`<p>For each right end r, shrink the left end until the sum &lt; k; then every subarray ending at r and starting in [l, r] works, adding r − l + 1. <b>O(n)</b>. With negatives, use prefix sums plus a Fenwick tree / merge sort: O(n log n).</p>`,
+code:String.raw`def count_sum_less_than_k(a, k):
+    l = s = cnt = 0
+    for r, x in enumerate(a):
+        s += x
+        while s >= k and l <= r:
+            s -= a[l]; l += 1
+        cnt += r - l + 1
+    return cnt`});
+
+add("code",{src:"sp",lvl:1,t:"Subarray sum equals k (LC 560)",
+q:`<p>Count subarrays whose sum is exactly k (array may contain negatives).</p>`,
+h:`Hash map of prefix-sum counts.`,
+a:`<p>For each prefix sum pre, add the number of earlier prefixes equal to pre − k. <b>O(n)</b> time and space.</p>`,
+code:String.raw`from collections import defaultdict
+def subarray_sum(a, k):
+    cnt = defaultdict(int); cnt[0] = 1
+    pre = ans = 0
+    for x in a:
+        pre += x
+        ans += cnt[pre - k]
+        cnt[pre] += 1
+    return ans`});
+
+add("code",{src:"sp",lvl:2,t:"Matrix block sum (LC 1314)",
+q:`<p>For each cell (i, j), return the sum of all cells within distance K in both row and column (clipped at the edges).</p>`,
+h:`2D prefix sums and inclusion-exclusion.`,
+a:`<p>Build P with P[i+1][j+1] = sum of the top-left rectangle. Each block sum is then four lookups. <b>O(mn)</b>.</p>`,
+code:String.raw`def matrix_block_sum(M, K):
+    m, n = len(M), len(M[0])
+    P = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m):
+        for j in range(n):
+            P[i + 1][j + 1] = M[i][j] + P[i][j + 1] + P[i + 1][j] - P[i][j]
+    out = [[0] * n for _ in range(m)]
+    for i in range(m):
+        for j in range(n):
+            r1, c1 = max(0, i - K), max(0, j - K)
+            r2, c2 = min(m, i + K + 1), min(n, j + K + 1)
+            out[i][j] = P[r2][c2] - P[r1][c2] - P[r2][c1] + P[r1][c1]
+    return out`});
+
+add("code",{src:"sp",lvl:2,t:"Max subarray sum with one deletion (LC 1186)",
+q:`<p>Return the maximum sum of a non-empty subarray where you may delete at most one element (the result must still be non-empty).</p>`,
+h:`Two DP values ending at i: no deletion used, one deletion used.`,
+a:`<p>keep = best sum ending here with no deletion (Kadane). dele = best ending here with one deletion: either delete the current element (previous keep) or extend an earlier deletion. <b>O(n)</b>.</p>`,
+code:String.raw`def maximum_sum(a):
+    keep, dele, best = a[0], float("-inf"), a[0]
+    for x in a[1:]:
+        dele = max(dele + x, keep)     # uses keep from the previous index
+        keep = max(keep + x, x)
+        best = max(best, keep, dele)
+    return best`});
+
+add("code",{src:"sp",lvl:2,t:"Coin change: min coins, count ways, ordered ways",
+q:`<p>(a) Given coin values, find the minimum number of coins to make an amount (e.g. coins 2, 3, 5 make 10 with 2 coins). (b) Count the number of combinations (coin change II); live-coded variant: ways to write n as a sum of natural numbers ≤ k with repetition. (c) How does this differ from combination sum IV?</p>`,
+h:`Loop order decides whether order matters.`,
+a:`<ul><li>(a) dp[a] = min over coins of dp[a − c] + 1. O(amount · coins).</li>
+<li>(b) Coins in the <b>outer</b> loop counts each multiset once. The "sum to n with numbers up to k" problem is this with coins 1…k.</li>
+<li>(c) Amount in the outer loop counts ordered sequences, so 1+1+2, 1+2+1, 2+1+1 are three ways.</li></ul>`,
+code:String.raw`def min_coins(coins, amount):
+    INF = float("inf"); dp = [0] + [INF] * amount
+    for a in range(1, amount + 1):
+        for c in coins:
+            if c <= a:
+                dp[a] = min(dp[a], dp[a - c] + 1)
+    return dp[amount] if dp[amount] < INF else -1
+
+def count_combinations(coins, amount):      # order doesn't matter
+    dp = [1] + [0] * amount
+    for c in coins:                           # coins OUTER
+        for a in range(c, amount + 1):
+            dp[a] += dp[a - c]
+    return dp[amount]
+
+def count_sequences(nums, target):           # order matters (comb. sum IV)
+    dp = [1] + [0] * target
+    for a in range(1, target + 1):            # amount OUTER
+        for x in nums:
+            if x <= a:
+                dp[a] += dp[a - x]
+    return dp[target]
+
+# ways to sum to n using 1..k with repetition:
+# count_combinations(range(1, k + 1), n)`});
+
+add("code",{src:"sp",lvl:1,t:"Length-8 substrings that appear at least twice",
+q:`<p>Given a string, return every substring of length 8 that occurs two or more times.</p>`,
+h:`Slide a window and use two sets (like LC 187, repeated DNA sequences).`,
+a:`<p>O(n·L) with slicing; a rolling hash (Rabin–Karp) makes it O(n).</p>`,
+code:String.raw`def repeated_substrings(s, L=8):
+    seen, rep = set(), set()
+    for i in range(len(s) - L + 1):
+        t = s[i:i + L]
+        if t in seen:
+            rep.add(t)
+        else:
+            seen.add(t)
+    return list(rep)`});
+
+add("code",{src:"sp",lvl:2,t:"Substrings containing a, b and c (LC 1358)",
+q:`<p>Given a string of a, b, c, count substrings containing at least one of each.</p>`,
+h:`For each end index, how many start positions work?`,
+a:`<p>Track the last index of each letter. Substrings ending at i that contain all three are those starting at or before min(last) — that's min(last) + 1 of them. <b>O(n)</b>.</p>`,
+code:String.raw`def number_of_substrings(s):
+    last = {"a": -1, "b": -1, "c": -1}
+    ans = 0
+    for i, ch in enumerate(s):
+        last[ch] = i
+        ans += min(last.values()) + 1
+    return ans`});
+
+add("code",{src:"sp",lvl:2,t:"Matrix from row and column sums (LC 1605)",
+q:`<p>Given non-negative row sums and column sums with the same total, build any non-negative matrix that matches them.</p>`,
+h:`Greedy: put as much as possible in each cell.`,
+a:`<p>Set A[i][j] = min(row[i], col[j]) and subtract from both. Each step zeroes a row or a column, so it always finishes consistently (like the northwest-corner rule). O(mn).</p>`,
+code:String.raw`def restore_matrix(row, col):
+    row, col = row[:], col[:]
+    A = [[0] * len(col) for _ in row]
+    for i in range(len(row)):
+        for j in range(len(col)):
+            A[i][j] = min(row[i], col[j])
+            row[i] -= A[i][j]; col[j] -= A[i][j]
+    return A`});
+
+add("code",{src:"sp",lvl:2,t:"Shortest subarray with at least k distinct values",
+q:`<p>A subarray is "good" if it contains at least k distinct integers. Return the length of the shortest good subarray, or −1.</p>`,
+h:`Sliding window with a count map; shrink while the window is still good.`,
+a:`<p>Expand right; while the window has ≥ k distinct values, record its length and shrink from the left. <b>O(n)</b>.</p>`,
+code:String.raw`from collections import defaultdict
+def min_len_k_distinct(a, k):
+    cnt, l, best = defaultdict(int), 0, float("inf")
+    for r, x in enumerate(a):
+        cnt[x] += 1
+        while len(cnt) >= k:
+            best = min(best, r - l + 1)
+            cnt[a[l]] -= 1
+            if cnt[a[l]] == 0:
+                del cnt[a[l]]
+            l += 1
+    return best if best < float("inf") else -1`});
+
+add("code",{src:"sp",lvl:2,t:"Trapping rain water (LC 42)",
+q:`<p>Given bar heights, compute how much water is trapped after rain.</p>`,
+h:`Water above i = min(max left, max right) − h[i]. Two pointers avoid storing both arrays.`,
+a:`<p>Move the pointer on the lower side; its trapped water is decided by its own side's max. <b>O(n)</b> time, O(1) space.</p>`,
+code:String.raw`def trap(h):
+    l, r = 0, len(h) - 1
+    lmax = rmax = water = 0
+    while l < r:
+        if h[l] < h[r]:
+            lmax = max(lmax, h[l]); water += lmax - h[l]; l += 1
+        else:
+            rmax = max(rmax, h[r]); water += rmax - h[r]; r -= 1
+    return water`});
+
+add("code",{src:"sp",lvl:1,t:"Streaming moving average",
+q:`<p>Implement a moving average over a stream with a fixed window size.</p>`,
+h:`Deque plus a running sum.`,
+a:`<p>O(1) per update, O(window) memory. Follow-ups: exponentially weighted average (O(1) memory), floating-point drift (recompute the sum occasionally), moving median (two heaps).</p>`,
+code:String.raw`from collections import deque
+class MovingAverage:
+    def __init__(self, size):
+        self.q, self.size, self.s = deque(), size, 0.0
+    def next(self, x):
+        self.q.append(x); self.s += x
+        if len(self.q) > self.size:
+            self.s -= self.q.popleft()
+        return self.s / len(self.q)`});
+
+add("code",{src:"sp",lvl:1,t:"Minimum add to make parentheses valid (LC 921)",
+q:`<p>Given a string of '(' and ')', return the minimum number of parentheses to add to make it valid.</p>`,
+h:`Count unmatched opens and unmatched closes.`,
+a:`<p>One pass, O(n).</p>`,
+code:String.raw`def min_add_to_make_valid(s):
+    open_ = add = 0
+    for ch in s:
+        if ch == "(":
+            open_ += 1
+        elif open_:
+            open_ -= 1
+        else:
+            add += 1
+    return add + open_`});
+
+add("code",{src:"sp",lvl:1,t:"Climbing stairs variants (LC 746, LC 70)",
+q:`<p>(a) Min cost climbing stairs: cost[i] is paid when you step on stair i; you can climb 1 or 2 at a time and start at 0 or 1. (b) Number of ways to reach step n when each move can be any size from a given set.</p>`,
+h:`Both are one-dimensional DPs on the step index.`,
+a:`<p>(a) dp[i] = min(dp[i−1] + cost[i−1], dp[i−2] + cost[i−2]). (b) dp[i] = Σ dp[i − s] over allowed s. O(n) and O(n·|steps|).</p>`,
+code:String.raw`def min_cost_climbing(cost):
+    a = b = 0                          # dp[i-2], dp[i-1]
+    for i in range(2, len(cost) + 1):
+        a, b = b, min(b + cost[i - 1], a + cost[i - 2])
+    return b
+
+def ways(n, steps):
+    dp = [1] + [0] * n
+    for i in range(1, n + 1):
+        dp[i] = sum(dp[i - s] for s in steps if s <= i)
+    return dp[n]`});
+
+add("code",{src:"sp",lvl:1,t:"Minimum moves to equal array elements (LC 453)",
+q:`<p>In one move, you add 1 to every element except one. What is the minimum number of moves to make all elements equal?</p>`,
+h:`Adding 1 to all but one is the same as subtracting 1 from one.`,
+a:`<p>Relative to each other, each move lowers one element by 1. So bring everything down to the minimum: <span class="key">moves = sum(a) − n·min(a)</span>. O(n).</p>`});
+
+add("code",{src:"sp",lvl:2,t:"Longest increasing subsequence in O(n log n)",
+q:`<p>Find the length of the longest strictly increasing subsequence.</p>`,
+h:`tails[k] = smallest possible tail of an increasing subsequence of length k+1.`,
+a:`<p>For each x, binary-search the first tail ≥ x and replace it (or append). O(n log n). The O(n²) DP is fine to mention first.</p>`,
+code:String.raw`import bisect
+def lis(a):
+    tails = []
+    for x in a:
+        i = bisect.bisect_left(tails, x)
+        if i == len(tails):
+            tails.append(x)
+        else:
+            tails[i] = x
+    return len(tails)`});
+
+add("code",{src:"sp",lvl:2,t:"0/1 knapsack and longest common subsequence",
+q:`<p>(a) 0/1 knapsack: items with weights and values, capacity W, maximise value. (b) Longest common subsequence of two strings.</p>`,
+h:`Knapsack: iterate capacity downwards for a 1D table. LCS: 2D table on prefixes.`,
+a:`<p>(a) O(nW) time, O(W) space. (b) O(mn).</p>`,
+code:String.raw`def knapsack(wts, vals, W):
+    dp = [0] * (W + 1)
+    for w, v in zip(wts, vals):
+        for c in range(W, w - 1, -1):     # downwards: each item used once
+            dp[c] = max(dp[c], dp[c - w] + v)
+    return dp[W]
+
+def lcs(s, t):
+    m, n = len(s), len(t)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(m):
+        for j in range(n):
+            dp[i + 1][j + 1] = dp[i][j] + 1 if s[i] == t[j] else max(dp[i][j + 1], dp[i + 1][j])
+    return dp[m][n]`});
+
+/* ===================== LEETCODE DRILLS ===================== */
+add("lc",{"src": "classic", "lvl": 1, "t": "Number of Islands (LC 200)", "q": "<p>An m × n grid holds <code>\"1\"</code> (land) and <code>\"0\"</code> (water). Count the islands. Land connects up, down, left and right, not diagonally.</p>", "h": "Scan every cell. Each unvisited <code>\"1\"</code> is a new island: count it, then flood-fill (DFS or BFS) so its cells are never counted again.", "a": "<p>Outer loop over every cell; on a <code>\"1\"</code>, add one and sink the whole island. DFS (recursion) is shortest to write; BFS (a queue) can't overflow the stack on huge grids. <b>O(rows · cols)</b>.</p>\n<p><b>Pitfalls you hit:</b></p>\n<ul><li><code>rows, col = len(grid)</code> fails: <code>len</code> returns one int. Use <code>rows, cols = len(grid), len(grid[0])</code>.</li>\n<li>Checking only <code>nr &lt; rows</code>: Python's <code>grid[-1]</code> silently means the last row, so the walk wraps around and later crashes. Always check <code>0 &lt;= nr &lt; rows and 0 &lt;= nc &lt; cols</code>.</li>\n<li>Mark a cell visited when you <i>add</i> it to the queue, not when you pop it.</li>\n<li>The grid holds strings: compare with <code>\"1\"</code>, not <code>1</code>.</li></ul>", "code": "from collections import deque\n\nclass Solution:\n    def numIslands(self, grid):\n        rows, cols = len(grid), len(grid[0])\n        count = 0\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == \"1\":\n                    count += 1\n                    grid[r][c] = \"0\"                 # mark when enqueued\n                    q = deque([(r, c)])\n                    while q:\n                        cr, cc = q.popleft()\n                        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                            nr, nc = cr + dr, cc + dc\n                            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == \"1\":\n                                grid[nr][nc] = \"0\"\n                                q.append((nr, nc))\n        return count", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def numIslands(self, grid: List[List[str]]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([[\"1\",\"1\",\"1\",\"1\",\"0\"],\n      [\"1\",\"1\",\"0\",\"1\",\"0\"],\n      [\"1\",\"1\",\"0\",\"0\",\"0\"],\n      [\"0\",\"0\",\"0\",\"0\",\"0\"]], 1),\n    ([[\"1\",\"1\",\"0\",\"0\",\"0\"],\n      [\"1\",\"1\",\"0\",\"0\",\"0\"],\n      [\"0\",\"0\",\"1\",\"0\",\"0\"],\n      [\"0\",\"0\",\"0\",\"1\",\"1\"]], 3),\n    # Edge cases\n    ([[\"0\"]], 0),                               # single water cell\n    ([[\"1\"]], 1),                               # single land cell\n    ([[\"1\",\"0\"],[\"0\",\"1\"]], 2),                 # diagonals don't connect\n    ([[\"1\",\"0\",\"1\"],\n      [\"0\",\"1\",\"0\"],\n      [\"1\",\"0\",\"1\"]], 5),                       # checkerboard\n    ([[\"1\",\"1\",\"1\"],\n      [\"0\",\"1\",\"0\"],\n      [\"1\",\"1\",\"1\"]], 1),                       # one snake-shaped island\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.numIslands(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "classic", "lvl": 1, "t": "Max Area of Island (LC 695)", "q": "<p>An m × n grid holds 1 (land) and 0 (water). Return the area of the largest island, or 0 if there is none.</p>", "h": "Same scan as Number of Islands, but have the flood-fill <i>return</i> how many cells it sank, and keep the max.", "a": "<p><code>ans = max(ans, bfs(r, c))</code> for each new island. <b>O(rows · cols)</b>.</p>\n<p><b>Pitfalls you hit:</b></p>\n<ul><li>Expanding from the start cell <code>(r, c)</code> instead of the cell you just popped. Unpack once: <code>cr, cc = q.popleft()</code>.</li>\n<li>Marking visited on pop lets a cell enter the queue twice, so the size is overcounted (2×2 grid gives 5).</li>\n<li>Typo <code>nc = cr + dc</code> instead of <code>cc + dc</code>.</li>\n<li>This grid holds ints: compare with <code>1</code>.</li></ul>", "code": "from collections import deque\n\nclass Solution:\n    def maxAreaOfIsland(self, grid):\n        rows, cols = len(grid), len(grid[0])\n        best = 0\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == 1:\n                    grid[r][c] = 0\n                    q, size = deque([(r, c)]), 0\n                    while q:\n                        cr, cc = q.popleft()\n                        size += 1\n                        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):\n                            nr, nc = cr + dr, cc + dc\n                            if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:\n                                grid[nr][nc] = 0\n                                q.append((nr, nc))\n                    best = max(best, size)\n        return best", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def maxAreaOfIsland(self, grid: List[List[int]]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    ([[1,1,0,0,0],\n      [1,0,0,1,1],\n      [0,0,0,1,0],\n      [0,1,0,1,1]], 5),                         # small: islands of size 3, 5, 1\n    # LeetCode Example 1\n    ([[0,0,1,0,0,0,0,1,0,0,0,0,0],\n      [0,0,0,0,0,0,0,1,1,1,0,0,0],\n      [0,1,1,0,1,0,0,0,0,0,0,0,0],\n      [0,1,0,0,1,1,0,0,1,0,1,0,0],\n      [0,1,0,0,1,1,0,0,1,1,1,0,0],\n      [0,0,0,0,0,0,0,0,0,0,1,0,0],\n      [0,0,0,0,0,0,0,1,1,1,0,0,0],\n      [0,0,0,0,0,0,0,1,1,0,0,0,0]], 6),\n    ([[0,0,0,0,0,0,0,0]], 0),                   # LeetCode Example 2\n    ([[0]], 0),\n    ([[1]], 1),\n    ([[1,1],[1,1]], 4),                         # whole grid is one island\n    ([[1,0],[0,1]], 1),                         # diagonals don't connect\n    ([[1,0,1],[0,1,0],[1,0,1]], 1),             # checkerboard\n    ([[1,1,0,0],[0,0,0,1],[0,0,1,1]], 3),       # biggest isn't the first found\n    ([[1,1,1],[1,0,1],[1,1,1]], 8),             # ring around a lake\n    ([[1],[1],[0],[1]], 2),                     # single column\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.maxAreaOfIsland(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "classic", "lvl": 2, "t": "Spiral Matrix (LC 54)", "q": "<p>Return all elements of an m × n matrix in clockwise spiral order, starting at the top-left.</p>", "h": "Either walk with a direction and turn when the next cell is out of bounds or visited, or shrink four boundaries (top, bottom, left, right) after each side.", "a": "<p>The boundary version below needs no visited set. Guard the bottom row and left column with <code>if top &lt;= bottom</code> / <code>if left &lt;= right</code>, otherwise non-square shapes read a row twice. <b>O(m · n)</b>.</p>\n<p><b>Pitfalls you hit (direction version):</b></p>\n<ul><li>After turning, save the new direction: <code>curr_dir = directions[counter % 4]</code>. Otherwise the next step goes right again.</li>\n<li>Start at <code>(0, -1)</code>, one step left of the first cell, so the first step right lands on <code>(0, 0)</code>. Starting at <code>(-1, 0)</code> turns down immediately.</li>\n<li>Test non-square shapes (2 rows, 2 columns, 4×3): that's where spirals break.</li></ul>", "code": "class Solution:\n    def spiralOrder(self, matrix):\n        res = []\n        top, bottom = 0, len(matrix) - 1\n        left, right = 0, len(matrix[0]) - 1\n        while top <= bottom and left <= right:\n            for c in range(left, right + 1):\n                res.append(matrix[top][c])\n            top += 1\n            for r in range(top, bottom + 1):\n                res.append(matrix[r][right])\n            right -= 1\n            if top <= bottom:\n                for c in range(right, left - 1, -1):\n                    res.append(matrix[bottom][c])\n                bottom -= 1\n            if left <= right:\n                for r in range(bottom, top - 1, -1):\n                    res.append(matrix[r][left])\n                left += 1\n        return res", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([[1,2,3],[4,5,6],[7,8,9]], [1,2,3,6,9,8,7,4,5]),\n    ([[1,2,3,4],[5,6,7,8],[9,10,11,12]], [1,2,3,4,8,12,11,10,9,5,6,7]),\n    # Edge cases\n    ([[7]], [7]),                                       # 1x1\n    ([[1,2,3,4]], [1,2,3,4]),                           # single row\n    ([[1],[2],[3],[4]], [1,2,3,4]),                     # single column\n    ([[1,2],[3,4]], [1,2,4,3]),                         # 2x2\n    ([[1,2,3],[4,5,6]], [1,2,3,6,5,4]),                 # wide, 2 rows\n    ([[1,2],[3,4],[5,6],[7,8]], [1,2,4,6,8,7,5,3]),     # tall, 2 cols\n    ([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]],\n     [1,2,3,4,8,12,16,15,14,13,9,5,6,7,11,10]),         # 4x4, two layers\n    ([[1,2,3],[4,5,6],[7,8,9],[10,11,12]],\n     [1,2,3,6,9,12,11,10,7,4,5,8]),                     # inner leftover column\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.spiralOrder(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "sp", "lvl": 2, "t": "Subarray Sum Equals K (LC 560): tests and pitfalls", "q": "<p>Count the contiguous subarrays whose sum is exactly k. The array can contain negatives and zeros.</p>", "h": "If the running sum is s now and was s − k earlier, the elements in between sum to k. Count earlier prefix sums in a hashmap.", "a": "<p>Brute force (two nested loops, O(n²)) is fine to say first. Optimal: running sum <code>s</code> and <code>count</code> of prefix sums seen, starting <code>{0: 1}</code>. For each x: <code>s += x</code>, <code>ans += count[s − k]</code>, then <code>count[s] += 1</code>. <b>O(n)</b>.</p>\n<p><b>Pitfalls you hit:</b></p>\n<ul><li>Sorting destroys contiguity: subarrays are in the original order.</li>\n<li>Sliding window only works for all-positive arrays; negatives break \"grow or shrink\".</li>\n<li>Forgetting <code>{0: 1}</code> misses subarrays starting at index 0.</li>\n<li>Query <code>count[s − k]</code> before adding <code>s</code>, or k = 0 counts the empty subarray.</li></ul>", "code": "from collections import defaultdict\n\nclass Solution:\n    def subarraySum(self, nums, k):\n        count = defaultdict(int)\n        count[0] = 1\n        s = ans = 0\n        for x in nums:\n            s += x\n            ans += count[s - k]      # query first\n            count[s] += 1\n        return ans", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def subarraySum(self, nums: List[int], k: int) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    (([1,1,1], 2), 2),\n    (([1,2,3], 3), 2),\n    # Edge cases\n    (([1], 1), 1),                      # single element equals k\n    (([1], 0), 0),                      # no match\n    (([5], -5), 0),                     # negative k, no match\n    (([-1,-1,1], 0), 1),                # negatives: [-1,1]\n    (([-1,-1,1], -1), 3),               # [-1], [-1], [-1,-1,1]\n    (([1,-1,0], 0), 3),                 # [1,-1], [0], [1,-1,0]\n    (([0,0,0], 0), 6),                  # all zeros: every subarray counts\n    (([1,2,1,2,1], 3), 4),              # overlapping matches\n    (([3,4,7,2,-3,1,4,2], 7), 4),       # classic mixed example\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.subarraySum(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "sp", "lvl": 2, "t": "Coin Change (LC 322): tests and pitfalls", "q": "<p>Given coin values (unlimited supply of each) and an amount, return the fewest coins that make the amount, or −1 if impossible.</p>", "h": "dp[a] = fewest coins for amount a. dp[a] = min over coins c ≤ a of dp[a − c] + 1.", "a": "<p>Bottom-up from dp[0] = 0, everything else infinity. <b>O(amount · coins)</b>. This is an <b>unbounded (complete) knapsack</b>: coins are reused, so the inner loop runs forwards.</p>\n<p><b>Watch for:</b></p>\n<ul><li>Greedy fails: coins [1, 3, 4], amount 6. Biggest-first gives 4+1+1 (3 coins); best is 3+3 (2).</li>\n<li>Plain recursion without memoization times out on [186, 419, 83, 408], 6249.</li>\n<li>Return −1 when dp[amount] is still infinity; amount 0 needs 0 coins.</li></ul>", "code": "class Solution:\n    def coinChange(self, coins, amount):\n        INF = float(\"inf\")\n        dp = [0] + [INF] * amount\n        for a in range(1, amount + 1):\n            for c in coins:\n                if c <= a and dp[a - c] + 1 < dp[a]:\n                    dp[a] = dp[a - c] + 1\n        return dp[amount] if dp[amount] != INF else -1", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def coinChange(self, coins: List[int], amount: int) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    (([1,2,5], 11), 3),                     # 5 + 5 + 1\n    (([2], 3), -1),                         # impossible\n    (([1], 0), 0),                          # amount 0 needs 0 coins\n    # Edge cases\n    (([1], 1), 1),\n    (([5], 0), 0),                          # coin larger than amount 0\n    (([2], 4), 2),                          # same coin reused\n    (([5,2], 3), -1),                       # impossible, unsorted coins\n    (([3,7], 5), -1),                       # gap between coins\n    (([3,7], 13), 3),                       # 3 + 3 + 7\n    (([1,3,4], 6), 2),                      # greedy trap: 3 + 3\n    (([2,5,10,1], 27), 4),                  # 10 + 10 + 5 + 2\n    (([186,419,83,408], 6249), 20),         # large: catches slow solutions\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.coinChange(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "classic", "lvl": 1, "t": "House Robber (LC 198)", "q": "<p>Houses in a line hold <code>nums[i]</code> money. You can't rob two adjacent houses. Return the most you can rob.</p>", "h": "At house i: skip it (keep f[i−1]) or rob it (f[i−2] + nums[i]).", "a": "<div class=\"eq\">f[i] = max(f[i−1], f[i−2] + nums[i])\nf[0] = nums[0],  f[1] = max(nums[0], nums[1])</div>\n<p>Only the last two values are used, so two variables give O(1) space. <b>O(n)</b>. Trace on [2,7,9,3,1]: 2, 7, 11, 11, 12.</p>\n<p><b>Pitfalls you hit:</b></p>\n<ul><li><code>dp = []</code> then <code>dp[0] = …</code> raises IndexError: create it with <code>dp = [0] * n</code>.</li>\n<li>One house: return <code>nums[0]</code> before touching <code>nums[1]</code>.</li>\n<li>Don't name the list <code>rob</code> (same as the method).</li>\n<li>[2,1,1,2] → 4: the best answer skips two houses in a row, so \"every other house\" is wrong.</li></ul>", "code": "class Solution:\n    def rob(self, nums):\n        prev2, prev1 = 0, 0          # f[i-2], f[i-1]\n        for x in nums:\n            prev2, prev1 = prev1, max(prev1, prev2 + x)\n        return prev1", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def rob(self, nums: List[int]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([1,2,3,1], 4),                 # 1 + 3\n    ([2,7,9,3,1], 12),              # 2 + 9 + 1\n    # Edge cases\n    ([5], 5),                       # single house\n    ([2,1], 2),\n    ([1,2], 2),\n    ([0,0,0], 0),\n    ([2,1,1,2], 4),                 # skip two in a row: first + last\n    ([5,1,1,5], 10),\n    ([1,3,1,3,100], 103),           # one huge house at the end\n    ([6,7,1,30,8,2,4], 41),         # 7 + 30 + 4\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.rob(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "classic", "lvl": 2, "t": "House Robber II, circular (LC 213)", "q": "<p>Same as House Robber, but the houses are in a circle: the first and last house are neighbours.</p>", "h": "You can't rob both the first and last house. Solve the straight-line problem twice: without the last house, and without the first.", "a": "<p><code>max(rob_line(nums[:-1]), rob_line(nums[1:]))</code>, with a special case for one house. <b>O(n)</b>.</p>\n<p><b>Pitfalls you hit (two-array version):</b></p>\n<ul><li><code>dp_tail</code> covers <code>nums[1..n−1]</code>, so <code>dp_tail[i]</code> is house <code>i+1</code>: the loop needs <code>nums[i+1]</code>, not <code>nums[i]</code>.</li>\n<li>Its base case must use <code>dp_tail[0]</code>, not <code>dp_head[0]</code> (house 0 is excluded).</li>\n<li>Slicing into a helper avoids the offset entirely.</li></ul>", "code": "class Solution:\n    def rob(self, nums):\n        def rob_line(a):\n            prev2 = prev1 = 0\n            for x in a:\n                prev2, prev1 = prev1, max(prev1, prev2 + x)\n            return prev1\n        if len(nums) == 1:\n            return nums[0]\n        return max(rob_line(nums[:-1]), rob_line(nums[1:]))", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def rob(self, nums: List[int]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([2,3,2], 3),\n    ([1,2,3,1], 4),\n    ([1,2,3], 3),\n    # Edge cases\n    ([5], 5),                                   # single house\n    ([0], 0),\n    ([1,2], 2),\n    ([2,1], 2),\n    ([3,3,3], 3),                               # all three are neighbours\n    ([0,0,0,0], 0),\n    ([2,1,1,2], 3),                             # can't take both ends (4 in a line)\n    ([200,3,140,20,10], 340),                   # 200 + 140, skip 10\n    ([1,3,1,3,100], 103),                       # 3 + 100\n    ([4,1,2,7,5,3,1], 14),                      # 4 + 7 + 3\n    ([1,1,3,6,7,10,7,1,8,5,9,1,4,4,3], 41),     # long input\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.rob(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "sp", "lvl": 2, "t": "Longest Increasing Subsequence (LC 300): tests", "q": "<p>Return the length of the longest strictly increasing subsequence (not necessarily contiguous).</p>", "h": "O(n²): dp[i] = 1 + max dp[j] over j &lt; i with nums[j] &lt; nums[i]. O(n log n): keep the smallest possible tail for each length and binary-search.", "a": "<p>Your O(n²) DP is correct: <code>dp = [1] * n</code>, then for each i check every earlier j. Answer is <code>max(dp)</code>, not <code>dp[-1]</code>. Mention the O(n log n) <code>bisect</code> version as the follow-up (in the Coding section).</p>\n<p><b>Watch for:</b> strictly increasing, so all-equal arrays give 1 and duplicates don't extend a run.</p>", "code": "class Solution:\n    def lengthOfLIS(self, nums):\n        n = len(nums)\n        dp = [1] * n                     # dp[i] = LIS ending at i\n        for i in range(1, n):\n            for j in range(i):\n                if nums[j] < nums[i]:\n                    dp[i] = max(dp[i], dp[j] + 1)\n        return max(dp)", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def lengthOfLIS(self, nums: List[int]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([10,9,2,5,3,7,101,18], 4),             # 2, 3, 7, 101\n    ([0,1,0,3,2,3], 4),                     # 0, 1, 2, 3\n    ([7,7,7,7,7,7,7], 1),                   # strictly increasing\n    # Edge cases\n    ([5], 1),\n    ([1,2], 2),\n    ([2,1], 1),\n    ([1,2,3,4,5], 5),                       # fully increasing\n    ([5,4,3,2,1], 1),                       # fully decreasing\n    ([-2,-1], 2),                           # negatives\n    ([1,1,2,2,3,3], 3),                     # duplicates don't count twice\n    ([4,10,4,3,8,9], 3),                    # 4, 8, 9\n    ([1,3,6,7,9,4,10,5,6], 6),              # 1, 3, 6, 7, 9, 10\n    ([3,5,6,2,5,4,19,5,6,7,12], 6),         # 3, 4, 5, 6, 7, 12\n    ([0,-1,-2,5,-3,6,-4,7], 4),             # 0, 5, 6, 7\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.lengthOfLIS(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "classic", "lvl": 1, "t": "Maximum Subarray, 最大连续子段和 (LC 53)", "q": "<p>Return the largest sum of a non-empty contiguous subarray.</p>", "h": "Kadane: at each element, either start fresh or extend the best subarray ending at the previous element.", "a": "<div class=\"eq\">f[i] = max(nums[i], f[i−1] + nums[i]),   answer = max(f)</div>\n<p><b>O(n)</b>, O(1) space. Related: 918 (circular), 152 (product), 1186 (one deletion, in Coding).</p>\n<p><b>Watch for:</b> all-negative arrays. Starting <code>best = 0</code> returns 0 instead of the largest element; start from <code>nums[0]</code>.</p>", "code": "class Solution:\n    def maxSubArray(self, nums):\n        cur = best = nums[0]\n        for x in nums[1:]:\n            cur = max(x, cur + x)\n            best = max(best, cur)\n        return best", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def maxSubArray(self, nums: List[int]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([-2,1,-3,4,-1,2,1,-5,4], 6),       # [4,-1,2,1]\n    ([1], 1),\n    ([5,4,-1,7,8], 23),                 # whole array\n    # Edge cases\n    ([-1], -1),                         # single negative\n    ([-3,-2,-5], -2),                   # all negative: best single element\n    ([0,0], 0),\n    ([2,-1,2], 3),                      # dip worth crossing\n    ([-2,1], 1),\n    ([8,-19,5,-4,20], 21),              # 5 - 4 + 20\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.maxSubArray(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "classic", "lvl": 2, "t": "Maximum Product Subarray (LC 152)", "q": "<p>Return the largest product of a non-empty contiguous subarray.</p>", "h": "A negative number turns the smallest product into the largest. Track both the max and the min product ending at i.", "a": "<div class=\"eq\">a = mx·x,  b = mn·x\nmx = max(x, a, b),  mn = min(x, a, b)</div>\n<p>Answer is the largest mx seen. Zeros reset both to 0, and the next element starts fresh. <b>O(n)</b>.</p>\n<p><b>Pitfalls you hit:</b></p>\n<ul><li>Keeping only the max: [−2, 3, −4] returns 3 instead of 24 because the −6 was thrown away.</li>\n<li><code>mx = mn = [0] * n</code> makes <b>one</b> list with two names, so writing mn overwrites mx. Create two lists.</li>\n<li>In the rolling version, compute both candidates before updating either variable.</li></ul>", "code": "class Solution:\n    def maxProduct(self, nums):\n        mx = mn = best = nums[0]\n        for x in nums[1:]:\n            a, b = mx * x, mn * x            # use old mx, mn\n            mx, mn = max(x, a, b), min(x, a, b)\n            best = max(best, mx)\n        return best", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def maxProduct(self, nums: List[int]) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([2,3,-2,4], 6),                    # [2,3]\n    ([-2,0,-1], 0),\n    # Edge cases\n    ([-2,3,-4], 24),                    # two negatives multiply\n    ([-2], -2),                         # single negative\n    ([0,2], 2),\n    ([-2,-3], 6),\n    ([2,-5,-2,-4,3], 24),               # [-2,-4,3]\n    ([-1,-2,-3,0], 6),                  # [-2,-3]\n    ([3,-1,4], 4),\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.maxProduct(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "sp", "lvl": 2, "t": "Longest Common Subsequence (LC 1143): tests and pitfalls", "q": "<p>Return the length of the longest subsequence common to both strings.</p>", "h": "dp[i][j] = LCS of text1[:i] and text2[:j]. On a match, extend the diagonal; otherwise take the better of dropping one character.", "a": "<div class=\"eq\">match:     dp[i][j] = dp[i−1][j−1] + 1\notherwise: dp[i][j] = max(dp[i−1][j], dp[i][j−1])</div>\n<p>Use a padded (m+1) × (n+1) table so row 0 and column 0 mean \"empty string\" and nothing reads index −1. <b>O(mn)</b>.</p>\n<p><b>Pitfalls you hit:</b></p>\n<ul><li><code>max(dp[i−1][j], dp[i][j−1]) + 1</code> on a match counts the same character twice: (\"ba\", \"aa\") gives 2 instead of 1.</li>\n<li><code>([0] * n) * m</code> is a flat 1D list. <code>[[0] * n] * m</code> repeats one row m times. Use <code>[[0] * n for _ in range(m)]</code>.</li>\n<li>Unpadded base cases read <code>dp[-1]</code> (the last row) when i = 0.</li></ul>", "code": "class Solution:\n    def longestCommonSubsequence(self, text1, text2):\n        m, n = len(text1), len(text2)\n        dp = [[0] * (n + 1) for _ in range(m + 1)]\n        for i in range(1, m + 1):\n            for j in range(1, n + 1):\n                if text1[i - 1] == text2[j - 1]:\n                    dp[i][j] = dp[i - 1][j - 1] + 1\n                else:\n                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])\n        return dp[m][n]", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def longestCommonSubsequence(self, text1: str, text2: str) -> int:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ((\"abcde\", \"ace\"), 3),\n    ((\"abc\", \"abc\"), 3),\n    ((\"abc\", \"def\"), 0),\n    # Edge cases\n    ((\"a\", \"a\"), 1),\n    ((\"ab\", \"ba\"), 1),\n    ((\"ba\", \"aa\"), 1),                  # catches the max + 1 bug\n    ((\"aab\", \"ab\"), 2),\n    ((\"bsbininm\", \"jmjkbkjkv\"), 1),     # known LeetCode failing case\n    ((\"oxcpqrsvwf\", \"shmtulqrypy\"), 2), # \"qr\"\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.longestCommonSubsequence(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+add("lc",{"src": "sp", "lvl": 2, "t": "Partition Equal Subset Sum, 0/1 knapsack (LC 416)", "q": "<p>Can the array be split into two subsets with equal sums? This is the standard LeetCode stand-in for 0/1 knapsack.</p>", "h": "Odd total → impossible. Otherwise ask: can some subset reach sum // 2, using each number at most once?", "a": "<div class=\"eq\">dp[j] = can some subset reach sum j?   dp[0] = True\nfor x in nums:\n    for j in range(target, x − 1, −1):   # BACKWARDS\n        dp[j] = dp[j] or dp[j − x]</div>\n<p><b>O(n · target)</b>. Looping j backwards keeps each number used once (0/1). Forwards would allow reuse, which is unbounded knapsack (322, 518). More 0/1 practice: 494 Target Sum, 1049 Last Stone Weight II, 474 Ones and Zeroes.</p>\n<p><b>Pitfalls in your draft:</b></p>\n<ul><li><code>sum(nums) / 2</code> is a float; use <code>sum % 2</code> and <code>// 2</code>.</li>\n<li>A 2D table needs shape (n+1) × (target+1) with <code>dp[0][0] = True</code>; yours had the dimensions swapped and no +1.</li>\n<li>Test even-sum-but-impossible inputs; the odd-sum check doesn't cover them.</li></ul>", "code": "class Solution:\n    def canPartition(self, nums):\n        total = sum(nums)\n        if total % 2:\n            return False\n        target = total // 2\n        dp = [True] + [False] * target\n        for x in nums:\n            for j in range(target, x - 1, -1):\n                dp[j] = dp[j] or dp[j - x]\n        return dp[target]", "starter": "from typing import List\nimport copy\n\nclass Solution:\n    def canPartition(self, nums: List[int]) -> bool:\n        # TODO: your solution here\n        pass\n\n\n# ---------------- tests ----------------\ntests = [\n    # LeetCode examples\n    ([1,5,11,5], True),             # [1,5,5] and [11]\n    ([1,2,3,5], False),             # sum 11 is odd\n    # Edge cases\n    ([1], False),\n    ([2,2], True),\n    ([1,2], False),                 # odd sum\n    ([1,1,1,1], True),\n    ([1,2,5], False),               # even sum 8, no subset reaches 4\n    ([2,2,3,5], False),             # even sum 12, no subset reaches 6\n    ([1,3,4,4], False),             # even sum 12, no subset reaches 6\n    ([3,3,3,4,5], True),            # 4 + 5 = 3 + 3 + 3\n    ([14,9,8,4,3,2], True),         # 14 + 4 + 2 = 20\n    ([100]*8, True),\n    ([1]*30 + [100], False),        # one item bigger than the target (65)\n]\n\nif __name__ == \"__main__\":\n    sol = Solution()\n    passed = 0\n    for i, (args, expected) in enumerate(tests, 1):\n        args = args if isinstance(args, tuple) else (args,)\n        got = sol.canPartition(*copy.deepcopy(args))   # copy so your code can modify inputs\n        ok = got == expected\n        passed += ok\n        print(f\"Test {i}: {'PASS' if ok else 'FAIL'}  expected={expected}, got={got}\")\n    print(f\"\\n{passed}/{len(tests)} passed\")"});
+
+/* ===================== PYTHON & CS ===================== */
+add("py",{src:"sp",lvl:1,t:"list vs tuple",
+q:`<p>What's the difference between a list and a tuple? When would you use each?</p>`,h:`Mutability and what follows from it.`,
+a:`<ul><li>List: mutable, over-allocated dynamic array (amortised O(1) append).</li>
+<li>Tuple: immutable, slightly smaller and faster to create; hashable if its contents are, so it can be a dict key or set member.</li>
+<li>Use tuples for fixed records (e.g. (price, qty)) and dictionary keys; lists for collections you modify.</li></ul>`});
+
+add("py",{src:"sp",lvl:1,t:"is vs ==",
+q:`<p>What's the difference between <code>is</code> and <code>==</code>?</p>`,h:`Identity vs equality.`,
+a:`<p><code>==</code> calls <code>__eq__</code> (value equality). <code>is</code> checks object identity (same id). Use <code>is</code> only for singletons like <code>None</code>. Small ints and some strings are cached, so <code>a is b</code> may be True by accident: don't rely on it.</p>`});
+
+add("py",{src:"sp",lvl:1,t:"Pass by reference or by value?",
+q:`<p>Does Python pass arguments by reference or by value?</p>`,h:`Neither exactly. What does assignment do inside a function?`,
+a:`<p><b>By object reference</b> ("call by sharing"). The function gets a reference to the same object. Mutating it (<code>lst.append(1)</code>) is visible to the caller; rebinding the name (<code>lst = [1]</code>) is not. Immutable objects (int, str, tuple) can't be mutated, so they behave like pass-by-value.</p>
+<p>Classic trap: mutable default arguments (<code>def f(x=[])</code>) are created once and shared across calls; use <code>None</code> and create inside.</p>`});
+
+add("py",{src:"sp",lvl:1,t:"Generators",
+q:`<p>What is a generator and why use one?</p>`,h:`yield, laziness, memory.`,
+a:`<p>A function with <code>yield</code> returns an iterator that produces values lazily, keeping its state between calls. O(1) memory for streaming large data (e.g. reading a big tick file line by line), and composable pipelines. Generator expressions: <code>(x*x for x in data)</code>. Can only be iterated once.</p>`});
+
+add("py",{src:"sp",lvl:2,t:"Decorators",
+q:`<p>What is a decorator? Write one that times a function.</p>`,h:`A function that takes a function and returns a wrapped function.`,
+a:`<p><code>@timed</code> above <code>def f</code> means <code>f = timed(f)</code>. Use <code>functools.wraps</code> to keep the name and docstring. Common uses: logging, caching (<code>functools.lru_cache</code>), retries, access checks.</p>`,
+code:String.raw`import time, functools
+def timed(f):
+    @functools.wraps(f)
+    def wrapper(*args, **kwargs):
+        t = time.perf_counter()
+        out = f(*args, **kwargs)
+        print(f.__name__, time.perf_counter() - t)
+        return out
+    return wrapper`});
+
+add("py",{src:"sp",lvl:2,t:"Threading, the GIL and multiprocessing",
+q:`<p>Explain the GIL. When would you use threads, processes or asyncio?</p>`,h:`CPU-bound vs I/O-bound.`,
+a:`<ul><li>In CPython the Global Interpreter Lock lets only one thread execute Python bytecode at a time.</li>
+<li><b>I/O-bound</b> (network, disk): threads or asyncio work well; the GIL is released while waiting.</li>
+<li><b>CPU-bound</b> pure Python: use multiprocessing (separate interpreters) or push the work into NumPy / C extensions, which release the GIL.</li>
+<li>Free-threaded builds (Python 3.13+ option) remove the GIL experimentally; worth one sentence.</li></ul>`});
+
+add("py",{src:"classic",lvl:1,t:"Shallow vs deep copy",
+q:`<p>What's the difference between a shallow and a deep copy?</p>`,h:`Nested lists.`,
+a:`<p>A shallow copy (<code>list(a)</code>, <code>a[:]</code>, <code>copy.copy</code>) creates a new outer container but shares the inner objects. <code>copy.deepcopy</code> recursively copies everything. Trap: <code>[[0]*n]*m</code> creates m references to the same row.</p>`});
+
+add("py",{src:"classic",lvl:1,t:"dict and set internals",
+q:`<p>How are dicts implemented and what are their complexities?</p>`,h:`Hash table.`,
+a:`<p>Open-addressing hash table: average O(1) lookup, insert and delete; O(n) worst case with bad hashing. Keys must be hashable (immutable). Since Python 3.7, dicts preserve insertion order. Sets use the same structure without values.</p>`});
+
+add("py",{src:"sp",lvl:2,t:"pandas for research data",
+q:`<p>You have a DataFrame of daily prices for many tickers. Compute each ticker's daily returns, a 20-day rolling volatility, and an annualised Sharpe per ticker.</p>`,h:`groupby + pct_change + rolling. Avoid Python loops.`,
+a:`<p>Sort by date within ticker first; watch for look-ahead bias (shift signals by one day) and missing data.</p>`,
+code:String.raw`import numpy as np
+df = df.sort_values(["ticker", "date"])
+df["ret"] = df.groupby("ticker")["close"].pct_change()
+df["vol20"] = (df.groupby("ticker")["ret"]
+                 .transform(lambda r: r.rolling(20).std()))
+sharpe = (df.groupby("ticker")["ret"]
+            .agg(lambda r: r.mean() / r.std() * np.sqrt(252)))`});
+
+/* ===================== DISCUSSION ===================== */
+add("talk",{src:"sp",lvl:1,t:"Résumé and project deep-dive",
+q:`<p>Walk me through your most relevant project. Interviewers at Squarepoint reportedly dig deep and expect you to explain assumptions and limitations.</p>`,h:`Problem → data → method → result → what could be wrong → what you'd do next.`,
+a:`<ul><li>Prepare 2 projects at three depths: 30 seconds, 2 minutes, 10 minutes.</li>
+<li>For each: the assumptions, how you validated (out-of-sample?), failure modes, and one thing you'd do differently.</li>
+<li>Know every number on your résumé and be ready for "why that model and not a simpler one?".</li></ul>`});
+
+add("talk",{src:"classic",lvl:1,t:"Why Squarepoint? Why quant?",
+q:`<p>Why do you want to work at Squarepoint, and why this kind of role?</p>`,h:`Specific, short, true.`,
+a:`<p>Points you can genuinely draw on: a global, multi-strategy systematic fund where research, technology and trading work closely together; problems that mix statistics, programming and markets; fast feedback from data. Tie it to something you've actually done (your statistics coursework, capstone, or research). Keep it under a minute.</p>`});
+
+add("talk",{src:"classic",lvl:1,t:"Questions to ask your interviewer",
+q:`<p>"Do you have any questions for me?"</p>`,h:`Have two ready.`,
+a:`<ul><li>What does a researcher's first six months look like on your team?</li>
+<li>How do ideas move from research to production here, and who is involved?</li>
+<li>What distinguishes people who do well in their first year?</li></ul>`});
+
+/* ===================== LAST-MINUTE ===================== */
+add("last",{src:"sp",lvl:2,t:"Coupon collector, parts A and B (Green Book)",
+q:`<p>There are N coupon types; each cereal box holds one, every type equally likely and independent. <b>A.</b> On average, how many boxes do you need to collect at least one of every type? <b>B.</b> After buying n boxes, what is the expected number of distinct types you have?</p><p><i>Reported by a friend: asked verbatim, both parts, in a Squarepoint first round.</i></p>`,
+h:`A: split the collecting into stages, one per new type. B: one indicator per type.`,
+a:`<p><b>A.</b> With i types already collected, a box is new with probability (N − i)/N, so that stage takes N/(N − i) boxes on average (geometric). Add the stages:</p>
+<div class="eq">E = N/N + N/(N−1) + … + N/1 = N·(1 + 1/2 + … + 1/N) = N·H_N ≈ N ln N
+Die (N = 6): 6 × 2.45 = 14.7</div>
+<p><b>B.</b> Let Xⱼ = 1 if type j appears in the n boxes. P(type j never appears) = ((N − 1)/N)ⁿ.</p>
+<div class="eq">E[distinct] = N · [1 − ((N − 1)/N)ⁿ]
+Checks: n = 1 → 1;  n → ∞ → N;  N = n = 100 → 63.4 (the 100-doors question)</div>
+<p><b>Follow-ups:</b> boxes to get k distinct types = first k stages only; variance of A = Σ (1 − pᵢ)/pᵢ² ≈ π²N²/6; P(complete set within n boxes) = Σⱼ (−1)ʲ C(N, j)(1 − j/N)ⁿ.</p>`});
+
+add("last",{src:"sp",lvl:2,t:"Rock-paper-scissors where rock pays double",
+q:`<p>In rock-paper-scissors, a win with rock pays 2; any other win pays 1 (the loser pays the winner). What is the optimal mixed strategy?</p>`,
+h:`Let the opponent play rock, paper, scissors with r, p, s. At equilibrium each of your moves earns the same, and the game is symmetric so that value is 0.`,
+a:`<div class="eq">Your payoff playing Rock:     2s − p
+Your payoff playing Paper:    r − s
+Your payoff playing Scissors: p − 2r     (losing to rock costs 2)
+Set all three to 0:  r = s,  p = 2r,  r + p + s = 1</div>
+<p><span class="key">Rock ¼, Paper ½, Scissors ¼.</span> The bonus on rock makes you play <b>paper</b> more, not rock, because paper is what beats rock.</p>`});
+
+add("last",{src:"classic",lvl:2,t:"n + 1 coins vs n coins",
+q:`<p>Player A flips n + 1 fair coins, player B flips n fair coins. What is the probability A gets more heads than B?</p>`,
+h:`Compare A's first n coins with B's n coins, then look at A's extra coin. Or use symmetry between heads and tails.`,
+a:`<p>A has one more coin, so exactly one of these holds: A has more heads, or A has more tails (A can't tie B on both). Swapping heads and tails maps one case to the other, so they're equally likely.</p>
+<p><span class="key">P = ½</span></p>`});
+
+add("last",{src:"classic",lvl:2,t:"Knockout tournament: do two players meet?",
+q:`<p>2ⁿ players are placed randomly in a knockout bracket, and every match is 50/50. What is the probability two specific players ever play each other?</p>`,
+h:`Count matches. How many games are played in total, and how many pairs of players are there?`,
+a:`<p>Every game eliminates one player, so there are 2ⁿ − 1 games, each involving a different pair. By symmetry every pair is equally likely to be one of them.</p>
+<div class="eq">P = (2ⁿ − 1) / C(2ⁿ, 2) = (2ⁿ − 1) / [2ⁿ(2ⁿ − 1)/2] = 2/2ⁿ = 1/2ⁿ⁻¹</div>`});
+
+add("last",{src:"classic",lvl:2,t:"Letters in random envelopes",
+q:`<p>n letters are put into n addressed envelopes at random. What is the expected number of letters in the right envelope? What is the probability that none are right, for large n?</p>`,
+h:`Indicator per letter for the first part. Inclusion–exclusion for the second.`,
+a:`<p>Each letter is in its own envelope with probability 1/n, so by linearity <span class="key">E = n · 1/n = 1</span>, for every n.</p>
+<div class="eq">P(no letter correct) = 1 − 1/1! + 1/2! − 1/3! + … ± 1/n!  →  1/e ≈ 0.368</div>`});
+
+add("last",{src:"classic",lvl:2,t:"1000 coins, one double-headed",
+q:`<p>Of 1000 coins, one has heads on both sides; the rest are fair. You pick a coin at random, flip it 10 times and get 10 heads. What is the probability you picked the double-headed coin?</p>`,
+h:`Bayes. Prior 1/1000 vs 999/1000. Likelihood of 10 heads: 1 vs (1/2)¹⁰.`,
+a:`<div class="eq">P = (1/1000 · 1) / (1/1000 · 1 + 999/1000 · 1/1024)
+  = 1024 / (1024 + 999) = 1024/2023 ≈ 0.506</div>
+<p>Ten heads multiplies the odds by 1024, which roughly cancels the 1-in-1000 prior, so it's close to a coin flip.</p>`});
+
+add("last",{src:"classic",lvl:2,t:"Cards until the first ace",
+q:`<p>You turn over cards from a shuffled 52-card deck until the first ace appears. What is the expected number of cards turned over (including the ace)?</p>`,
+h:`The 4 aces split the 48 other cards into 5 gaps. By symmetry each gap has the same expected size.`,
+a:`<p>The 48 non-aces fall into 5 gaps (before the first ace, between aces, after the last), each averaging 48/5 = 9.6 cards. You turn over the first gap plus the ace:</p>
+<div class="eq">E = 9.6 + 1 = 10.6 = 53/5</div>
+<p>General: n cards with k special ones gives (n + 1)/(k + 1).</p>`});
+
+add("last",{src:"classic",lvl:1,t:"Birthday problem",
+q:`<p>How many people do you need for a better-than-even chance that two share a birthday (365 equally likely days)?</p>`,
+h:`Compute P(all different) = (365/365)(364/365)(363/365)…`,
+a:`<div class="eq">P(all different with k people) = Π_{i=0}^{k−1} (365 − i)/365 ≈ exp(−k(k−1)/730)
+Below ½ once k(k−1)/730 > ln 2, i.e. k ≈ 23   (P(shared) ≈ 50.7%)</div>
+<p>The key intuition: 23 people form 253 pairs.</p>`});
+
+add("last",{src:"classic",lvl:1,t:"Monty Hall",
+q:`<p>Three doors, one car. You pick a door; the host, who knows where the car is, opens another door showing a goat and offers a switch. Should you switch?</p>`,
+h:`What was the chance your first pick was right? Does the host's action change that?`,
+a:`<p>Your first pick is right with probability ⅓, and the host's reveal doesn't change that, because he can always show a goat. So the other closed door has ⅔.</p>
+<p><span class="key">Switch: win ⅔.</span> If the host opened a door at random and happened to show a goat, it would be ½.</p>`});
+
+add("last",{src:"classic",lvl:2,t:"Coding: process account commands",
+q:`<p><i>Practice task, not a reported question: written in the style of the raw-data parsing reported for a Squarepoint developer screen. Closest LeetCode: 2043 Simple Bank System.</i></p><p>Online-assessment style. Given lines like <code>deposit A 100</code>, <code>withdraw A 30</code>, <code>transfer A B 50</code>, return the final balance of every account. Reject a withdrawal or transfer that would make a balance negative, and report which lines were rejected. (Exact format in the real test is unknown; practise handling messy input.)</p>`,
+h:`Hash map of balances. Split each line, dispatch on the first word, validate before changing anything.`,
+a:`<p>O(number of lines). Things interviewers check: unknown commands, wrong number of fields, non-integer amounts, transfers to the same account, and not partially applying a rejected transfer.</p>`,
+code:String.raw`from collections import defaultdict
+
+def process(lines):
+    bal = defaultdict(int)
+    rejected = []
+    for i, line in enumerate(lines):
+        parts = line.split()
+        try:
+            op = parts[0].lower()
+            if op == "deposit" and len(parts) == 3:
+                acct, amt = parts[1], int(parts[2])
+                if amt <= 0: raise ValueError
+                bal[acct] += amt
+            elif op == "withdraw" and len(parts) == 3:
+                acct, amt = parts[1], int(parts[2])
+                if amt <= 0 or bal[acct] < amt: raise ValueError
+                bal[acct] -= amt
+            elif op == "transfer" and len(parts) == 4:
+                src, dst, amt = parts[1], parts[2], int(parts[3])
+                if amt <= 0 or src == dst or bal[src] < amt: raise ValueError
+                bal[src] -= amt
+                bal[dst] += amt
+            else:
+                raise ValueError
+        except (ValueError, IndexError):
+            rejected.append(i)
+    return dict(bal), rejected`});
+
+add("last",{src:"classic",lvl:2,t:"Coding: rebuild positions, flag shorts",
+q:`<p><i>Practice task, not a reported question: a trading-flavoured parsing exercise.</i></p><p>Given a stream of trades <code>(symbol, side, qty)</code> with side "BUY" or "SELL", rebuild the position in each symbol. Shorting is not allowed: flag every trade that would take a position below zero (and decide whether to skip it).</p>`,
+h:`Dictionary of positions; check before applying each sell.`,
+a:`<p>O(number of trades). Clarify with the interviewer: should a violating sell be skipped, partially filled, or applied and flagged? The version below skips it.</p>`,
+code:String.raw`from collections import defaultdict
+
+def positions(trades):
+    pos = defaultdict(int)
+    flagged = []
+    for i, (sym, side, qty) in enumerate(trades):
+        if side == "BUY":
+            pos[sym] += qty
+        elif side == "SELL":
+            if pos[sym] < qty:
+                flagged.append((i, sym))
+                continue            # skip: would go short
+            pos[sym] -= qty
+        else:
+            flagged.append((i, sym))
+    return dict(pos), flagged`});
+
+add("last",{src:"sp",lvl:2,t:"E[(XY)²] for correlated standard normals",
+q:`<p>X and Y are standard normal with correlation r. What is E[(XY)²]?</p><p><i>Reported in a Squarepoint first round, October 14 2026.</i></p>`,
+h:`Write Y = rX + √(1 − r²)·W with W standard normal and independent of X. Then expand (XY)². You need E[X²] = 1, E[X³] = 0 and E[X⁴] = 3.`,
+a:`<div class="eq">XY = rX² + √(1 − r²)·XW
+(XY)² = r²X⁴ + 2r√(1 − r²)·X³W + (1 − r²)·X²W²
+
+E[r²X⁴]           = r² · 3
+E[X³W]            = E[X³]·E[W] = 0
+E[(1 − r²)X²W²]   = (1 − r²) · 1 · 1
+
+E[(XY)²] = 3r² + 1 − r² = 1 + 2r²</div>
+<p><b>Sanity checks:</b> r = 0 means independent, so E[X²]E[Y²] = 1 ✓. r = 1 means Y = X, so E[X⁴] = 3 ✓.</p>
+<p><b>Likely follow-ups:</b> Var(XY) = E[(XY)²] − (E[XY])² = 1 + 2r² − r² = <span class="key">1 + r²</span>. E[X²Y²] is the same quantity; the general result is Isserlis/Wick: E[X²Y²] = E[X²]E[Y²] + 2(E[XY])².</p>`});
+
+add("last",{src:"sp",lvl:2,t:"HackerRank: ATM Queue (Kick Start 2020 Round F)",
+q:`<p>N people queue at an ATM; person i (1-indexed) wants Aᵢ. Each turn the person at the front withdraws min(X, what they still need). If they still need more, they go to the back of the queue; otherwise they leave. Return the order in which people leave.</p><p><i>Reported in a Squarepoint first round, October 14 2026 (HackerRank).</i></p>`,
+h:`Don't simulate (Aᵢ can be up to 10⁹). How many turns does person i need? Who leaves first among people needing the same number of turns?`,
+a:`<p>Person i needs ⌈Aᵢ / X⌉ turns. Everyone still in the queue gets one turn per lap, so people leave in order of their turn count, ties broken by original position (within a lap the queue order is preserved).</p>
+<div class="eq">Sort by (⌈Aᵢ/X⌉, i).   Time O(N log N), memory O(N)
+Example: X = 3, A = [2, 7, 4] → turns [1, 3, 2] → order 1 3 2</div>
+<p>Mention the brute-force simulation with a deque first (O(ΣAᵢ/X), too slow for large amounts), then give the sort. Compute the ceiling with integers: <code>(a + X − 1) // X</code>, not floats.</p>`,
+code:String.raw`def atm_queue(A, X):
+    turns = [((a + X - 1) // X, i + 1) for i, a in enumerate(A)]
+    return [i for _, i in sorted(turns)]
+
+assert atm_queue([2, 7, 4], 3) == [1, 3, 2]
+assert atm_queue([9, 10, 4, 7, 2], 6) == [3, 5, 1, 2, 4]`});
+
+add("last",{src:"sp",lvl:2,t:"Your project: why these metrics, and what else?",
+q:`<p>About a classification project you list on your CV that was evaluated with true positive rate and coverage: why did you use these metrics, and what would you use instead?</p><p><i>Reported in a Squarepoint first round, October 14 2026. Answering “the original paper used them” isn't enough; tie the metric to the decision.</i></p>`,
+h:`Say what decision the model drives and what each kind of mistake costs. Separate ranking quality, threshold choice and probability calibration.`,
+a:`<p><b>1. Justify the choice.</b> TPR (recall) = TP/(TP + FN): of the real positives, how many you catch. Coverage: the share of cases where the model is confident enough to act. Together they describe a “selective” model: act only on confident calls, and measure what you catch there. Say this matched the use case (e.g. missing a positive is costly, and you can abstain).</p>
+<p><b>2. Name the weakness.</b> TPR ignores false positives: predicting “positive” for everything gives TPR = 1. So it must be paired with precision or the false positive rate.</p>
+<p><b>3. Alternatives, by question they answer:</b></p>
+<ul>
+<li><b>Ranking, threshold-free:</b> ROC AUC; <b>PR AUC</b> is better when positives are rare.</li>
+<li><b>At a chosen threshold:</b> precision + recall, F1 (or F-beta to weight recall more).</li>
+<li><b>Probability quality:</b> log loss, Brier score, calibration plot. Matters when you size positions by the probability.</li>
+<li><b>Selective prediction:</b> risk–coverage curve (error rate among accepted cases vs coverage).</li>
+<li><b>What a fund cares about:</b> a cost-weighted loss or the PnL / Sharpe of acting on the predictions, measured out of sample.</li>
+</ul>
+<p><b>4. Validation.</b> Mention class imbalance, out-of-sample / time-ordered splits (no leakage), and confidence intervals on the metric (bootstrap).</p>`});
+
+/* ===================== MULTIPLE-CHOICE QUIZ ===================== */
+function mcq(t,lvl,q,opts,correct,a,h){add("mcq",{src:"classic",lvl:lvl,t:t,q:"<p>"+q+"</p>",opts:opts,correct:correct,a:a,h:h||""});}
+
+/* --- Statistics & inference --- */
+mcq("SD of heads in 10,000 flips",1,
+"You flip a fair coin 10,000 times. What is the standard deviation of the number of heads?",
+["25","50","100","2,500"],1,
+`<div class="eq">Var = n·p·(1 − p) = 10,000 × ½ × ½ = 2,500
+SD  = √2,500 = 50</div><p>2,500 is the variance, not the SD. A common trap.</p>`,
+"Binomial variance is n·p·(1 − p). Then take the square root.");
+
+mcq("Is the coin fair? 510,000 heads",2,
+"A coin is flipped 1,000,000 times and lands heads 510,000 times. How many standard deviations is that from what a fair coin would give?",
+["About 2","About 10","About 20","About 100"],2,
+`<div class="eq">Expected = 500,000      SD = √(10⁶ × ¼) = 500
+z = (510,000 − 500,000) / 500 = 20</div><p>Twenty SDs: essentially impossible for a fair coin. The coin is biased.</p>`);
+
+mcq("95% CI for a proportion",2,
+"60 of 100 trades were winners. The approximate 95% confidence interval for the true win rate is 0.60 ± …",
+["0.049","0.060","0.096","0.240"],2,
+`<div class="eq">SE = √(p̂(1 − p̂)/n) = √(0.6 × 0.4 / 100) = √0.0024 ≈ 0.049
+95% CI = 0.60 ± 1.96 × 0.049 ≈ 0.60 ± 0.096</div><p>0.049 is the standard error; you still need the 1.96 multiplier.</p>`);
+
+mcq("SD of the sample mean",1,
+"X₁, …, Xₙ are iid with standard deviation σ. What is the standard deviation of their average?",
+["σ","σ / n","σ / √n","σ² / n"],2,
+`<p>Var(sum) = nσ² (independent, so variances add). Divide the sum by n, so divide the variance by n²:</p>
+<div class="eq">Var(mean) = nσ² / n² = σ²/n      SD(mean) = σ/√n</div>`);
+
+mcq("Halving the confidence interval",1,
+"You want a confidence interval half as wide. How must the sample size change?",
+["Double it","Multiply by √2","Multiply by 4","Multiply by 8"],2,
+`<p>Width ∝ 1/√n. To halve 1/√n you need √n twice as big, so n four times as big.</p>`);
+
+mcq("Type I error in trading",2,
+"Null hypothesis: “this strategy has no edge.” Which outcome is a Type I error?",
+["Deploying a strategy that has no edge","Rejecting a strategy that does have an edge","Deploying a strategy that has an edge","Getting a p-value above 0.05"],0,
+`<p>Type I = rejecting a true null = a <b>false positive</b>. Here that means believing a useless strategy works and trading it. Option B is a Type II error (false negative, a missed opportunity).</p>`);
+
+mcq("Testing 100 useless strategies",2,
+"You backtest 100 strategies that truly have zero edge, each tested at α = 0.05. How many do you expect to look “significant”?",
+["0","1","5","50"],2,
+`<div class="eq">E[false positives] = 100 × 0.05 = 5
+P(at least one) = 1 − 0.95¹⁰⁰ ≈ 0.994</div><p>This is the multiple-testing problem. Fixes: Bonferroni (use α/100), out-of-sample testing, or control the false discovery rate.</p>`);
+
+mcq("Rare disease, accurate test",2,
+"A disease affects 1% of people. A test is 99% accurate for both sick and healthy people. You test positive. What is the probability you are sick?",
+["1%","50%","90%","99%"],1,
+`<div class="eq">Out of 10,000 people:  100 sick → 99 test positive
+                       9,900 healthy → 99 test positive (1% false positives)
+P(sick | +) = 99 / (99 + 99) = 50%</div><p>The low prior cancels the strong test.</p>`,
+"Imagine 10,000 people. Count the true positives and the false positives.");
+
+mcq("Correlation from covariance",1,
+"Cov(X, Y) = 6, SD(X) = 2, SD(Y) = 5. What is the correlation?",
+["0.06","0.3","0.6","1.2"],2,
+`<div class="eq">ρ = Cov / (SD(X)·SD(Y)) = 6 / (2 × 5) = 0.6</div>`);
+
+mcq("Variance of a difference",1,
+"X and Y are independent. Var(X − Y) equals …",
+["Var(X) − Var(Y)","Var(X) + Var(Y)","|Var(X) − Var(Y)|","0"],1,
+`<div class="eq">Var(X − Y) = Var(X) + (−1)²Var(Y) − 2Cov(X,Y) = Var(X) + Var(Y) − 0</div><p>Subtracting adds noise; it never cancels it (unless the variables are positively correlated).</p>`);
+
+mcq("Uncorrelated but dependent",2,
+"Z is standard normal. What is Cov(Z, Z²)?",
+["0","1","2","Can't tell"],0,
+`<div class="eq">Cov(Z, Z²) = E[Z³] − E[Z]·E[Z²] = 0 − 0 × 1 = 0</div><p>E[Z³] = 0 by symmetry. So Z and Z² are <b>uncorrelated</b> even though Z² is completely determined by Z. Zero correlation does not mean independence.</p>`);
+
+mcq("Bernoulli variance",1,
+"For a 0/1 variable with P(1) = p, which p gives the largest variance?",
+["p = 0.1","p = 0.25","p = 0.5","p = 0.9"],2,
+`<p>Var = p(1 − p), a parabola peaking at p = ½ with value ¼. This is why the “worst case” sample size for polls uses p = 0.5.</p>`);
+
+mcq("CI with only 8 trials",2,
+"You have 8 trials and 1 success. The normal-approximation CI p̂ ± 1.96·√(p̂(1 − p̂)/n) gives a lower bound below 0. What should you use instead?",
+["Nothing; the normal CI is fine","A Wilson or Clopper–Pearson interval","A t-interval with 7 degrees of freedom","Just report p̂ = 0.125"],1,
+`<p>With small n or p near 0 or 1 the normal approximation breaks (it can even go negative). The Wilson score interval or the exact Clopper–Pearson interval stay inside [0, 1].</p>`);
+
+mcq("MLE for Uniform(0, θ)",3,
+"You observe x₁, …, xₙ from Uniform(0, θ). What is the maximum-likelihood estimate of θ?",
+["2 × sample mean","Sample maximum","Sample maximum × (n + 1)/n","Sample median × 2"],1,
+`<div class="eq">L(θ) = (1/θ)ⁿ if θ ≥ every xᵢ, else 0</div><p>(1/θ)ⁿ gets bigger as θ gets smaller, so push θ down as far as allowed: θ̂ = max xᵢ. (2 × mean is the method-of-moments estimate; max × (n+1)/n is the unbiased fix.)</p>`);
+
+mcq("Sharpe 1: chance of losing over 4 years",3,
+"A strategy has annual Sharpe ratio 1 (returns normal, independent across years). Roughly what is the probability its 4-year total return is negative?",
+["16%","5%","2.3%","0.1%"],2,
+`<div class="eq">1 year:   mean μ, SD σ, with μ/σ = 1
+4 years:  mean 4μ, SD √4·σ = 2σ
+P(total < 0) = P(Z < −4μ/2σ) = Φ(−2) ≈ 2.3%</div><p>Sharpe scales with √T: one year gives Φ(−1) ≈ 16%.</p>`);
+
+/* --- Regression --- */
+mcq("OLS slope formula",1,
+"In the simple regression y = a + b·x, the OLS slope b equals …",
+["Cov(x, y) / Var(y)","Cov(x, y) / Var(x)","Corr(x, y)","Var(y) / Var(x)"],1,
+`<div class="eq">b = Cov(x, y) / Var(x) = ρ · SD(y)/SD(x)</div><p>It equals the correlation only when x and y have the same SD.</p>`);
+
+mcq("Reverse the regression",2,
+"Regressing y on x gives slope 2, and Corr(x, y) = 0.5. What slope do you get regressing x on y?",
+["0.5","0.25","0.125","2"],2,
+`<div class="eq">b(y on x) × b(x on y) = ρ²
+2 × c = 0.25   →   c = 0.125</div><p>It is <b>not</b> 1/2 = 0.5. Each regression shrinks toward the mean in its own direction.</p>`);
+
+mcq("R² in simple regression",1,
+"Corr(x, y) = 0.3. What is R² from regressing y on x?",
+["0.3","0.09","0.55","0.6"],1,
+`<p>In a one-variable regression R² = ρ² = 0.09. Only 9% of y's variance is explained, even though 0.3 sounds respectable.</p>`);
+
+mcq("Duplicate every row",2,
+"You accidentally duplicate every row of your dataset and rerun OLS. What happens?",
+["Coefficients double; t-stats unchanged","Coefficients unchanged; t-stats grow by about √2","Coefficients unchanged; t-stats unchanged","Coefficients halve; standard errors double"],1,
+`<p>The best-fit line is identical (same points, each counted twice). But OLS thinks n doubled, so standard errors shrink by about √2 and t-stats grow by about √2: false confidence.</p>`);
+
+mcq("Noise in x",2,
+"x is measured with random noise (y is measured exactly). What happens to the OLS slope?",
+["Unbiased, just noisier","Biased toward 0 (attenuation)","Biased away from 0","Flips sign"],1,
+`<div class="eq">b̂ → β · Var(x) / (Var(x) + Var(noise))</div><p>The extra spread in x flattens the fitted line. Called attenuation bias or errors-in-variables.</p>`);
+
+mcq("Noise in y",2,
+"y is measured with random, mean-zero noise (x is exact). What happens to the OLS slope?",
+["Unbiased, but larger standard error","Biased toward 0","Biased away from 0","Both bias and SE unchanged"],0,
+`<p>Noise in y just becomes part of the error term, which is still uncorrelated with x. The slope stays unbiased; the residual variance rises, so the SE rises. Compare: noise in x biases the slope.</p>`);
+
+mcq("Two nearly identical predictors",2,
+"Two regressors have correlation 0.99 (multicollinearity). What is the main symptom?",
+["Coefficients become biased","Large standard errors and unstable coefficients","R² drops to 0","Predictions become badly wrong"],1,
+`<p>OLS can't tell the two apart, so their individual coefficients swing wildly and have huge SEs (they can even take opposite signs). The coefficients are still unbiased and the predictions are usually fine.</p>`);
+
+mcq("Heteroscedasticity",2,
+"The error variance grows with x. What happens to OLS?",
+["Coefficients biased, SEs fine","Coefficients unbiased, standard errors wrong","Both biased","Nothing at all"],1,
+`<p>Unbiasedness only needs E[error | x] = 0, so the slope is still fine. But the usual SE formula assumes constant variance, so t-stats are wrong. Fix: robust (White / Huber–White) standard errors, or weighted least squares.</p>`);
+
+/* --- Normals and correlation --- */
+mcq("Predict Y from X",2,
+"X and Y are standard normal with correlation 0.6. You observe X = 2. What is E[Y | X = 2]?",
+["0.6","1.2","2","3.33"],1,
+`<div class="eq">Y = ρX + √(1 − ρ²)·W,  W independent of X
+E[Y | X = 2] = 0.6 × 2 + 0 = 1.2</div><p>Regression to the mean: Y is expected to be less extreme than X.</p>`);
+
+mcq("X given the sum",2,
+"X and Y are iid N(0, 1). Given X + Y = s, what is E[X | X + Y = s]?",
+["0","s","s/2","s/√2"],2,
+`<p>By symmetry E[X | S] = E[Y | S], and they add to E[X + Y | S] = s. So each is s/2.</p>`);
+
+mcq("Both positive, correlated normals",3,
+"X and Y are standard normal with correlation 0.5. What is P(X > 0 and Y > 0)?",
+["1/4","1/3","3/8","1/2"],1,
+`<div class="eq">P = ¼ + arcsin(ρ)/(2π) = ¼ + (π/6)/(2π) = ¼ + 1/12 = 1/3</div><p>Angle view: the pair is a rotated circle; the “both positive” wedge has angle π − arccos(ρ) = 2π/3, out of 2π.</p>`);
+
+mcq("Rain on two correlated days",3,
+"P(rain Saturday) = P(rain Sunday) = 0.2, and the rain indicators have correlation 0.6. What is P(rain on at least one day)?",
+["0.36","0.40","0.264","0.136"],2,
+`<div class="eq">Var of each indicator = 0.2 × 0.8 = 0.16
+Cov = 0.6 × 0.16 = 0.096
+P(both) = E[AB] = 0.2 × 0.2 + 0.096 = 0.136
+P(at least one) = 0.2 + 0.2 − 0.136 = 0.264</div><p>0.36 assumes independence; 0.4 ignores the overlap; 0.136 is P(both).</p>`,
+"Use Cov(A, B) = E[AB] − E[A]E[B] with indicators A, B.");
+
+/* --- Probability, CDF/PDF, expected values --- */
+mcq("Coupon collector, N = 4",2,
+"There are 4 equally likely coupon types. Expected boxes to collect all 4?",
+["4","6.25","8.33","16"],2,
+`<div class="eq">4/4 + 4/3 + 4/2 + 4/1 = 1 + 1.33 + 2 + 4 = 8.33   (= 4 × H₄ = 25/3)</div>`);
+
+mcq("Distinct types after n boxes",2,
+"N coupon types, n boxes. Which formula gives the expected number of distinct types?",
+["N · (1/N)ⁿ","N · [1 − (1 − 1/N)ⁿ]","n · (1 − 1/N)","N · H_N"],1,
+`<p>Indicator for each type: P(type j appears) = 1 − P(it never appears) = 1 − (1 − 1/N)ⁿ. Sum over N types. (N·H_N is part A: boxes to collect all.)</p>`);
+
+mcq("100 doors",2,
+"100 people each open one of 100 doors uniformly at random (repeats allowed). Expected number of different doors opened?",
+["50","63.4","73.2","100"],1,
+`<div class="eq">100 × [1 − 0.99¹⁰⁰] ≈ 100 × (1 − 1/e) ≈ 63.4</div>`);
+
+mcq("CDF of the maximum",2,
+"X₁, …, Xₙ are iid Uniform(0, 1). What is P(max ≤ x) for 0 ≤ x ≤ 1?",
+["n·x","xⁿ","1 − (1 − x)ⁿ","x/n"],1,
+`<p>The max is ≤ x exactly when <b>every</b> Xᵢ ≤ x. Independent, so multiply: x · x · … · x = xⁿ. (1 − (1 − x)ⁿ is the CDF of the minimum.)</p>`);
+
+mcq("PDF of the maximum",2,
+"Continuing: the max of n uniforms has CDF xⁿ. What is its density?",
+["xⁿ","n·xⁿ⁻¹","xⁿ⁺¹/(n + 1)","n·(1 − x)ⁿ⁻¹"],1,
+`<p>Density = derivative of the CDF: d/dx xⁿ = n·xⁿ⁻¹. (n(1 − x)ⁿ⁻¹ is the density of the minimum.)</p>`);
+
+mcq("Expected max of 3 uniforms",2,
+"E[max(U₁, U₂, U₃)] for iid Uniform(0, 1) is …",
+["1/2","2/3","3/4","5/6"],2,
+`<div class="eq">E = ∫₀¹ P(max > x) dx = ∫₀¹ (1 − x³) dx = 1 − 1/4 = 3/4
+General: n/(n + 1).  Min of n: 1/(n + 1)</div>`);
+
+mcq("Expected min of two dice",3,
+"Roll two fair dice. What is the expected value of the smaller one?",
+["91/36 ≈ 2.53","2.5","3","161/36 ≈ 4.47"],0,
+`<div class="eq">P(min ≥ k) = ((7 − k)/6)²
+E[min] = Σₖ P(min ≥ k) = (36 + 25 + 16 + 9 + 4 + 1)/36 = 91/36 ≈ 2.53</div><p>161/36 is the expected max (the two add to 7).</p>`,
+"Tail sum: E[X] = Σ P(X ≥ k) for k = 1, 2, …");
+
+mcq("Flips until HH",2,
+"Expected number of fair-coin flips until you first see two heads in a row?",
+["4","5","6","8"],2,
+`<div class="eq">a = from start, b = just saw H
+b = 1 + ½·0 + ½·a
+a = 1 + ½·b + ½·a   →   a = 6</div><p>HT takes only 4: after an H, a T finishes and another H keeps you in place, whereas for HH a T sends you back to the start.</p>`);
+
+mcq("Rolls until the first 6",1,
+"Expected number of rolls of a fair die until the first 6 (counting that roll)?",
+["3.5","5","6","36"],2,
+`<p>Geometric with success probability 1/6, so E = 1/(1/6) = 6.</p>`);
+
+mcq("Fair gambler's ruin",2,
+"A fair ±1 random walk starts at 3 and stops at 0 or 10. Probability it ends at 10?",
+["0.3","0.5","0.7","3/13"],0,
+`<p>A fair walk is a martingale: E[end] = start. So 10·P + 0·(1 − P) = 3, giving P = 3/10.</p>`);
+
+mcq("Covariance of 3s and 5s",3,
+"Roll a die n times. Let A = number of 3s and B = number of 5s. What is Cov(A, B)?",
+["0","n/36","−n/36","−n/6"],2,
+`<div class="eq">A = Σ Iᵢ, B = Σ Jᵢ  (roll i is a 3 / is a 5)
+Same roll: Cov(Iᵢ, Jᵢ) = E[IᵢJᵢ] − (1/6)(1/6) = 0 − 1/36   (can't be both)
+Different rolls: independent, Cov = 0
+Cov(A, B) = n × (−1/36) = −n/36</div>`);
+
+mcq("Expected matched couples",2,
+"n couples (2n people) are randomly split into n pairs. What is the expected number of pairs that are original couples?",
+["1/n","1","n/2","n/(2n − 1)"],3,
+`<p>Indicator for each couple. A given husband's partner is one of 2n − 1 people, so P(his wife) = 1/(2n − 1). Add over n couples:</p>
+<div class="eq">E = n/(2n − 1)   (→ ½ as n grows)</div>`);
+
+mcq("E[(XY)²], reported Oct 2026",3,
+"X and Y are standard normal with correlation r. What is E[(XY)²]?",
+["1","r²","1 + r²","1 + 2r²"],3,
+`<div class="eq">Y = rX + √(1 − r²)W
+(XY)² = r²X⁴ + 2r√(1 − r²)X³W + (1 − r²)X²W²
+E = 3r² + 0 + (1 − r²) = 1 + 2r²</div><p>1 + r² is Var(XY). Checks: r = 0 gives 1, r = 1 gives E[X⁴] = 3.</p>`,
+"Decompose Y and use E[X⁴] = 3.");
+
+/* ===================== ROUND 2: STATS, MATH, FINANCIAL INTUITION ===================== */
+add("r2",{src:"sp",lvl:1,t:"Derive the OLS estimate",
+q:`<p>Model y = βx + ε (no intercept). Derive the OLS estimate of β. Then do it with an intercept, and in matrix form.</p><p><i>The first part (y = βx + ε, estimate β by taking the derivative) is from your friend's round 2 notes (Oct 2026). The intercept and matrix versions are likely follow-ups, not reported.</i></p>`,
+h:`Write the sum of squared errors, take the derivative with respect to β, set it to 0.`,
+a:`<div class="eq">S(β) = Σ (yᵢ − βxᵢ)²
+dS/dβ = −2 Σ xᵢ(yᵢ − βxᵢ) = 0
+⇒  β̂ = Σ xᵢyᵢ / Σ xᵢ²</div>
+<p><b>With an intercept</b> (y = α + βx + ε): solve both first-order conditions.</p>
+<div class="eq">β̂ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)² = Cov(x, y) / Var(x)
+α̂ = ȳ − β̂·x̄        (the line passes through (x̄, ȳ))</div>
+<p><b>Matrix form:</b></p>
+<div class="eq">minimise ‖y − Xβ‖²
+−2Xᵀ(y − Xβ) = 0  ⇒  XᵀXβ̂ = Xᵀy  ⇒  β̂ = (XᵀX)⁻¹Xᵀy</div>
+<p>Say why it's a minimum: the second derivative 2Σxᵢ² (or 2XᵀX) is positive (definite). The first-order condition also says residuals are uncorrelated with x: Xᵀe = 0.</p>`});
+
+add("r2",{src:"sp",lvl:2,t:"Gauss–Markov: when is OLS BLUE?",
+q:`<p>State the Gauss–Markov theorem. Don't prove it: what conditions make the OLS estimator BLUE, and what does BLUE mean?</p><p><i>Reported by a friend for the Squarepoint round 2 (Oct 2026): "don't prove, but what are the conditions".</i></p>`,
+h:`Five conditions: linearity, rank, exogeneity, constant variance, no autocorrelation.`,
+a:`<p><b>BLUE</b> = Best (lowest variance) Linear Unbiased Estimator: among all estimators that are linear in y and unbiased, OLS has the smallest variance.</p>
+<ol>
+<li><b>Linear in parameters:</b> y = Xβ + ε.</li>
+<li><b>Full rank:</b> X has full column rank (no perfect multicollinearity), so XᵀX is invertible.</li>
+<li><b>Exogeneity:</b> E[ε | X] = 0. Errors are unrelated to the regressors.</li>
+<li><b>Homoscedasticity:</b> Var(εᵢ | X) = σ², the same for every observation.</li>
+<li><b>No autocorrelation:</b> Cov(εᵢ, εⱼ | X) = 0 for i ≠ j.</li>
+</ol>
+<p>Conditions 4 and 5 together: Var(ε | X) = σ²I. Then <span class="key">Var(β̂ | X) = σ²(XᵀX)⁻¹</span>.</p>
+<p><b>Points that stand out:</b> unbiasedness needs only 1–3; "best" also needs 4–5. <b>Normality is not required</b> (it's only needed for exact t and F tests in small samples). "Linear" means linear in y, which rules out estimators like the median or LAD; a biased estimator such as ridge can have lower MSE.</p>`});
+
+add("r2",{src:"sp",lvl:2,t:"What breaks when each Gauss–Markov condition fails?",
+q:`<p>For each Gauss–Markov condition, what happens to the OLS estimator and its standard errors when it fails, and how do you fix it? Give finance examples.</p>`,
+h:`Separate "the coefficient is wrong" (bias) from "the coefficient is fine but the standard errors are wrong".`,
+a:`<ul>
+<li><b>Exogeneity fails</b> (omitted variable, measurement error in x, reverse causality, lookahead): β̂ is <b>biased and inconsistent</b>. Fix: add the missing variable, instrumental variables, better data, check timing.</li>
+<li><b>Heteroscedasticity</b> (volatility clustering, bigger errors for large-cap vs small-cap): β̂ still unbiased, but <b>not best and the usual SEs are wrong</b>. Fix: White / Huber robust SEs, or WLS.</li>
+<li><b>Autocorrelated errors</b> (overlapping returns, slow-moving signals): unbiased, SEs usually <b>too small</b> so t-stats are inflated. Fix: Newey–West SEs, GLS, non-overlapping samples.</li>
+<li><b>Rank fails</b> (two identical features): XᵀX not invertible, no unique β̂. <b>Near</b> failure (multicollinearity): huge, unstable coefficients. Fix: drop/combine features, ridge, PCA.</li>
+<li><b>Non-linearity:</b> the linear fit is the best linear approximation, but coefficients are hard to interpret. Fix: transform features, add terms.</li>
+</ul>
+<p>Interviewer favourite: <span class="key">heteroscedasticity and autocorrelation hurt inference, not the point estimate; endogeneity hurts the estimate itself</span>.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"Variance of the slope, and the t-stat",
+q:`<p>In simple regression y = α + βx + ε with Gauss–Markov errors, what is Var(β̂)? What makes it small? How do you get a t-stat and test β = 0?</p>`,
+h:`Var(β̂) = σ²/Σ(xᵢ − x̄)².`,
+a:`<div class="eq">Var(β̂) = σ² / Σ(xᵢ − x̄)²
+σ̂² = Σ eᵢ² / (n − 2)
+t = β̂ / SE(β̂)  ~  t with n − 2 df</div>
+<p>Small variance needs <b>low noise σ²</b>, <b>many observations</b>, and <b>a wide spread in x</b>. |t| &gt; 2 is roughly significant at 5%.</p>
+<p>Link to round 1: duplicating every row doubles Σ(xᵢ − x̄)², so SE shrinks by √2 and t grows by √2 with no new information.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"Omitted variable bias",
+q:`<p>The true model is y = β₁x₁ + β₂x₂ + ε, but you regress y on x₁ only. What does β̂₁ converge to? When is there no bias?</p>`,
+h:`The omitted x₂ ends up in the error, which is now correlated with x₁.`,
+a:`<div class="eq">β̂₁ → β₁ + β₂ · Cov(x₁, x₂) / Var(x₁)</div>
+<p>No bias if β₂ = 0 (x₂ doesn't matter) or Cov(x₁, x₂) = 0 (x₂ is unrelated to x₁). The sign of the bias = sign(β₂) × sign(Cov).</p>
+<p>Finance example: regress a stock's return on a signal but omit the market. If the signal is correlated with market beta, part of the "alpha" is really market exposure.</p>`});
+
+add("r2",{src:"classic",lvl:1,t:"R², adjusted R², and a fit that looks too good",
+q:`<p>What does R² measure? Why does adding variables never lower it? Your regression has a great in-sample R² for predicting returns: what do you suspect?</p>`,
+h:`Think overfitting, lookahead, and what a realistic R² for daily returns is.`,
+a:`<p>R² = 1 − SS_res/SS_tot: the fraction of y's variance explained. Adding a regressor can only lower SS_res (OLS could set its coefficient to 0), so R² never falls. Adjusted R² = 1 − (1 − R²)(n − 1)/(n − p − 1) penalises extra variables.</p>
+<p><b>Too good to be true:</b> for daily returns, an out-of-sample R² of 1% is already strong. Suspect:</p>
+<ul><li>Lookahead / leakage (feature uses future data, e.g. close price used at the open)</li>
+<li>Overfitting (many features, tuned on the same sample); data snooping across many tries</li>
+<li>Overlapping targets inflating fit; survivorship bias; non-stationary regressors (spurious regression)</li></ul>
+<p>Fix: time-ordered train/test split, walk-forward validation, fewer features, regularisation.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"What does a p-value tell you?",
+q:`<p>What is a p-value? Give two common misinterpretations. A backtest gives p = 0.03: is the strategy real?</p>`,
+h:`It's a probability about the data, assuming the null is true.`,
+a:`<p><b>p-value:</b> the probability of seeing a result at least this extreme <b>if the null hypothesis is true</b>.</p>
+<ul><li>Not the probability the null is true.</li>
+<li>Not the probability the result is "due to chance" in general, and not a measure of effect size.</li></ul>
+<p><b>p = 0.03 in a backtest:</b> not convincing on its own. How many strategies did you try? (20 tries at 5% give about one false hit.) Is the effect large enough to survive costs? Does it hold out of sample, across periods and assets? Use a stricter bar (t ≈ 3) after searching many ideas.</p>`});
+
+add("r2",{src:"sp",lvl:1,t:"Sharpe ratio: definition and scaling",
+q:`<p>Define the Sharpe ratio. How do you annualise a daily Sharpe? If you combine N uncorrelated strategies with the same Sharpe S, what is the combined Sharpe?</p><p><i>Reported by a friend for the Squarepoint round 2 (Oct 2026).</i></p>`,
+h:`Mean scales with T, standard deviation with √T.`,
+a:`<div class="eq">Sharpe = (E[R] − r_f) / SD(R)          (often r_f ≈ 0 in interviews)
+Annual = daily × √252     (mean × 252, SD × √252)
+N uncorrelated, equal Sharpe S, equal risk:  combined ≈ S·√N</div>
+<p><b>Two strategies with correlation ρ</b> (equal Sharpe and volatility, 50/50): combined Sharpe = S·√(2/(1 + ρ)). With ρ = 0.3 and S = 1, that's 1.24.</p>
+<p>Caveats worth mentioning: Sharpe ignores fat tails and skew, assumes iid returns for the √T scaling (autocorrelation breaks it), and is estimated with large error (the SE of a Sharpe estimate is roughly 1/√years).</p>`});
+
+add("r2",{src:"sp",lvl:2,t:"Remove the zero-return days: Sharpe up or down?",
+q:`<p>Of 2n daily returns, n are exactly 0. You remove those n points. Does the Sharpe ratio go up or down, and by how much?</p><p><i>Reported on 1point3acres (Squarepoint QR, 2026).</i></p>`,
+h:`Let the non-zero returns have mean m and second moment s = E[x²]. Compute both Sharpes.`,
+a:`<div class="eq">All 2n:     mean = m/2,  E[x²] = s/2,  Var = s/2 − m²/4
+           Sharpe = m / √(2s − m²)
+Non-zero n: Sharpe = m / √(s − m²)
+Ratio = √((2s − m²)/(s − m²)) ≥ √2</div>
+<p><span class="key">It goes up, by at least √2</span> (about √2 when the mean is small relative to the volatility, as for daily returns). The mean doubles while the SD rises by less than 2×.</p>
+<p><b>Intuition point to add:</b> if the zeros are genuine flat days (no position), dropping them overstates performance. Sharpe should be computed on the full calendar of capital at risk.</p>`});
+
+add("r2",{src:"sp",lvl:1,t:"Random point on the unit sphere: Var(Y)",
+q:`<p>A point (X, Y, Z) is chosen uniformly on the unit sphere. What is Var(Y)?</p><p><i>Reported on Glassdoor (Squarepoint QR intern, 2026).</i></p>`,
+h:`X² + Y² + Z² = 1 always, and the three coordinates are symmetric.`,
+a:`<p>By symmetry E[Y] = 0 and E[X²] = E[Y²] = E[Z²]. They add to E[X² + Y² + Z²] = 1.</p>
+<div class="eq">Var(Y) = E[Y²] = 1/3</div>
+<p>Bonus fact: Y is actually Uniform(−1, 1) on the sphere (Archimedes), whose variance is also 2²/12 = 1/3.</p>`});
+
+add("r2",{src:"sp",lvl:3,t:"Case: credit-card spending data",
+q:`<p>You have time-series data of credit-card transactions: timestamp, customer ID, merchant, amount. How would you use it to make money? Walk through the approach and what could go wrong.</p><p><i>Reported on 1point3acres as the main question of a Squarepoint QR round 2 (Apr 2026). The candidate felt the interviewer had a specific answer in mind.</i></p>`,
+h:`Goal → data → features → model → validation → trading reality.`,
+a:`<ol>
+<li><b>Goal:</b> nowcast a public company's revenue before earnings (map merchants to tickers), then trade the earnings surprise versus consensus.</li>
+<li><b>Data:</b> map merchant strings to companies; handle refunds, duplicates, outliers; check the panel (customers join and leave).</li>
+<li><b>Features:</b> spend per merchant per day/week; <b>normalise by active customers</b> so panel growth isn't mistaken for sales growth; year-over-year changes to remove seasonality; calendar effects (holidays, weekdays).</li>
+<li><b>Model:</b> regress reported revenue growth on panel spend growth; predict the surprise relative to analyst consensus, since the price already reflects consensus.</li>
+<li><b>Validation:</b> time-ordered out-of-sample; only use data available at the trade date (reporting lags); few companies × few quarters means a small sample, so watch overfitting.</li>
+<li><b>Trading reality:</b> is the signal already priced (other funds buy the same data)? Costs, capacity, borrow for shorts, how much of revenue the panel covers (online vs in-store, regions).</li>
+</ol>
+<p><b>Tactic:</b> if the interviewer keeps steering, ask "are you thinking about X?" and follow their direction rather than defending your first idea.</p>`});
+
+add("r2",{src:"sp",lvl:2,t:"A rolling correlation that keeps rising",
+q:`<p>A 60-day rolling correlation between your signal and next-day returns has risen steadily for a year. Is the signal getting better? What do you check?</p><p><i>Example question from a Squarepoint interview guide (Quantt).</i></p>`,
+h:`Overlapping windows are not independent observations.`,
+a:`<ul><li><b>Effective sample size:</b> consecutive 60-day windows share 59 days, so the rolling series is highly autocorrelated. A smooth upward trend is easy to get by chance; a year gives only about 250/60 ≈ 4 independent windows.</li>
+<li><b>Significance of the level:</b> SE of a correlation ≈ 1/√60 ≈ 0.13 per window, so small correlations are noise.</li>
+<li><b>Regime dependence:</b> is it driven by one volatile period or one sector? Check sub-periods and assets.</li>
+<li><b>Out-of-sample and after costs:</b> turnover, capacity, realistic transaction costs.</li>
+<li><b>Lookahead:</b> make sure the signal at day t only uses data up to t.</li></ul>`});
+
+add("r2",{src:"classic",lvl:2,t:"Testing whether a signal is real",
+q:`<p>You've found a signal with a promising backtest. How do you convince yourself (and a PM) it's real before trading it?</p>`,
+h:`Out-of-sample, multiple testing, economic rationale, costs.`,
+a:`<ul><li><b>Hold-out data</b> never touched during research; walk-forward testing.</li>
+<li><b>Multiple testing:</b> count how many variants you tried; require t ≈ 3 or use a deflated Sharpe / FDR control.</li>
+<li><b>Robustness:</b> sub-periods, other assets/regions, small parameter changes shouldn't destroy it.</li>
+<li><b>Data hygiene:</b> point-in-time data, survivorship bias, lookahead, overlapping targets.</li>
+<li><b>Economics:</b> a plausible reason it works (risk premium, behavioural bias, structural flow), and that it isn't just a known factor (regress on market, size, momentum).</li>
+<li><b>Implementation:</b> net of costs and slippage, capacity, turnover, correlation with existing strategies.</li></ul>`});
+
+add("r2",{src:"classic",lvl:2,t:"AR(1): stationarity, variance and half-life",
+q:`<p>xₜ = φxₜ₋₁ + εₜ with εₜ iid, variance σ². When is it stationary? What are its variance and autocorrelations? What is the half-life of a shock?</p>`,
+h:`Iterate the recursion, or take the variance of both sides.`,
+a:`<div class="eq">Stationary iff |φ| &lt; 1
+Var(x) = σ² / (1 − φ²)
+Corr(xₜ, xₜ₋ₖ) = φᵏ
+Half-life: φʰ = ½  ⇒  h = ln(0.5) / ln(φ)      (φ = 0.9 → about 6.6 periods)</div>
+<p>φ = 1 is a random walk (not stationary; variance grows with t). Finance link: mean-reverting spreads in pairs trading are modelled as AR(1); estimate φ by regressing xₜ on xₜ₋₁.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"Spurious regression",
+q:`<p>You regress one stock price level on another unrelated stock's price level and get a t-stat of 15 and R² of 0.6. What's going on?</p>`,
+h:`What happens when you regress one random walk on another?`,
+a:`<p>Both series are non-stationary (random walks). Regressing levels on levels gives <b>spurious significance</b>: t-stats grow with sample size even when the series are independent, and residuals are strongly autocorrelated.</p>
+<p>Fix: regress <b>returns</b> (differences) instead, or test for <b>cointegration</b> (Engle–Granger: regress levels, then check the residuals are stationary with an ADF test). Rule of thumb: R² much larger than the Durbin–Watson statistic is a warning sign.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"MLE of a normal variance is biased",
+q:`<p>For x₁, …, xₙ iid N(μ, σ²), what is the MLE of σ²? Is it unbiased? Why do we divide by n − 1?</p>`,
+h:`E[Σ(xᵢ − x̄)²] = (n − 1)σ².`,
+a:`<div class="eq">σ̂²_MLE = (1/n) Σ (xᵢ − x̄)²
+E[σ̂²_MLE] = (n − 1)/n · σ²     (biased low)
+s² = (1/(n − 1)) Σ (xᵢ − x̄)²   (unbiased)</div>
+<p>Reason: x̄ is fitted from the same data, which uses up one degree of freedom, so deviations from x̄ are smaller than deviations from the true μ. The MLE is still consistent and has lower variance; the bias vanishes as n grows.</p>`});
+
+add("r2",{src:"classic",lvl:3,t:"Bias, variance and MSE for Uniform(0, θ)",
+q:`<p>Building on round 1: for n draws from Uniform(0, θ), compare the MSE of three estimators of θ: 2x̄, the MLE max(xᵢ), and (n+1)/n · max(xᵢ).</p>`,
+h:`MSE = bias² + variance. Var(max) = nθ²/((n+1)²(n+2)).`,
+a:`<div class="eq">2x̄:              unbiased, MSE = θ² / (3n)
+max (MLE):        bias −θ/(n+1), MSE = 2θ² / ((n+1)(n+2))
+(n+1)/n · max:    unbiased, MSE = θ² / (n(n+2))</div>
+<p>For n = 10 (θ = 1): 0.0333, 0.0152, 0.0083 (checked by simulation). The max-based estimators improve like 1/n² versus 1/n for the mean. Bonus: the lowest-MSE multiple of the max is (n+2)/(n+1) · max, trading a little bias for less variance.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"Volatility drag and log returns",
+q:`<p>A strategy has arithmetic mean return μ and volatility σ per period. What is its long-run (geometric) growth rate? Why do log returns matter?</p>`,
+h:`Taylor-expand log(1 + r).`,
+a:`<div class="eq">E[log(1 + r)] ≈ μ − σ²/2</div>
+<p>The compound growth rate is lower than the average return by about σ²/2 ("volatility drag"). Example: +10% then −10% gives 0.99, a loss, despite a 0% average. Log returns add over time, so they're the natural unit for compounding, Kelly sizing (maximise E[log wealth]: f* ≈ μ/σ²) and for summing returns across periods.</p>`});
+
+add("r2",{src:"classic",lvl:2,t:"Market beta and market-neutral",
+q:`<p>What is a stock's beta? How would you make a portfolio market-neutral, and why might a fund like Squarepoint want that?</p>`,
+h:`Beta is a regression slope.`,
+a:`<div class="eq">β = Cov(r_stock, r_market) / Var(r_market)     (slope of stock on market)</div>
+<p>Market-neutral: choose long and short positions so the portfolio's total beta is 0 (Σ wᵢβᵢ = 0), e.g. hedge a long book by shorting the index by β × position.</p>
+<p>Why: returns then come from the strategy's alpha rather than the market's direction, so they're uncorrelated with investors' other holdings, risk is lower, and many small market-neutral strategies combine well (Sharpe ≈ S√N). Mention that betas are estimated with error and change over time.</p>`});
+
+add("r2",{src:"classic",lvl:1,t:"Mental maths: Taylor approximations",
+q:`<p>Without a calculator: estimate 1.01¹⁰⁰, √(1.1), and e^0.05. Round 1 asked 2⁷² and how far off the estimate was.</p>`,
+h:`(1 + x)ⁿ ≈ 1 + nx for small nx; otherwise use e^(n·x).`,
+a:`<div class="eq">1.01¹⁰⁰ = e^(100·ln 1.01) ≈ e^(100·(0.01 − 0.00005)) = e^0.995 ≈ 2.70   (exact 2.7048)
+√1.1 = (1 + 0.1)^½ ≈ 1 + 0.05 − 0.00125 = 1.04875               (exact 1.0488)
+e^0.05 ≈ 1 + 0.05 + 0.00125 = 1.05125                           (exact 1.05127)</div>
+<p>Use 1 + nx only when nx is small; for 1.01¹⁰⁰, nx = 1 is not small, so 1 + nx = 2 would be badly off. Second-order term: C(n, 2)x².</p>`});
+
+/* --- Round 2 quiz questions --- */
+mcq("R2: OLS slope with no intercept",1,
+"For y = βx + ε (no intercept), the OLS estimate of β is …",
+["Σxᵢyᵢ / Σxᵢ²","Σyᵢ / Σxᵢ","Cov(x, y) / Var(y)","Σxᵢ² / Σxᵢyᵢ"],0,
+`<div class="eq">dS/dβ = −2Σxᵢ(yᵢ − βxᵢ) = 0  ⇒  β̂ = Σxᵢyᵢ / Σxᵢ²</div>`);
+
+mcq("R2: Gauss–Markov needs …",2,
+"Which condition is NOT needed for OLS to be BLUE under Gauss–Markov?",
+["Normally distributed errors","E[ε | X] = 0","Constant error variance","X has full column rank"],0,
+`<p>Normality is only needed for exact small-sample t and F tests. BLUE needs linearity, full rank, exogeneity, homoscedasticity and no autocorrelation.</p>`);
+
+mcq("R2: Unbiasedness needs …",2,
+"Which conditions are enough for OLS to be unbiased (not necessarily best)?",
+["Linearity, full rank, exogeneity","Homoscedasticity and no autocorrelation","Normal errors only","Large sample size only"],0,
+`<p>Unbiasedness needs only the first three. Homoscedasticity and no autocorrelation are what make it "best" (lowest variance).</p>`);
+
+mcq("R2: Autocorrelated errors",2,
+"Regression errors are positively autocorrelated (e.g. overlapping returns). What happens?",
+["β̂ biased, SEs fine","β̂ unbiased, SEs too small (t-stats inflated)","β̂ unbiased, SEs too large","Nothing changes"],1,
+`<p>The point estimate is still unbiased, but the usual SE formula treats correlated observations as independent, so SEs are too small and t-stats look too good. Use Newey–West SEs.</p>`);
+
+mcq("R2: Omitted variable bias",2,
+"True model y = β₁x₁ + β₂x₂ + ε with β₂ > 0 and Cov(x₁, x₂) > 0. Regressing y on x₁ alone gives β̂₁ …",
+["Biased upward","Biased downward","Unbiased","Biased toward 0"],0,
+`<div class="eq">β̂₁ → β₁ + β₂·Cov(x₁, x₂)/Var(x₁)</div><p>Both factors positive, so the bias is upward.</p>`);
+
+mcq("R2: Annualising Sharpe",1,
+"A strategy has a daily Sharpe ratio of 0.1 (252 trading days, iid returns). Its annual Sharpe is about …",
+["25.2","1.6","0.1","0.63"],1,
+`<div class="eq">0.1 × √252 ≈ 0.1 × 15.9 ≈ 1.59</div><p>The mean scales by 252, the SD by √252.</p>`);
+
+mcq("R2: Combining uncorrelated strategies",1,
+"You run 4 uncorrelated strategies, each with Sharpe 0.5 and equal risk. The combined Sharpe is …",
+["0.5","1","2","0.25"],1,
+`<p>Combined ≈ S·√N = 0.5 × √4 = 1. The means add, but the volatility only grows like √N.</p>`);
+
+mcq("R2: Dropping zero-return days",2,
+"Half of your 2n daily returns are exactly 0 and you delete them. The Sharpe ratio …",
+["Goes down","Stays the same","Goes up by at least √2","Goes up by exactly 2×"],2,
+`<div class="eq">Ratio = √((2s − m²)/(s − m²)) ≥ √2</div><p>The mean doubles; the SD grows by less than 2×. If those were real flat days, dropping them overstates performance.</p>`);
+
+mcq("R2: Sphere coordinate variance",1,
+"A point (X, Y, Z) is uniform on the unit sphere. Var(Y) = …",
+["1/2","1/3","1/4","2/3"],1,
+`<p>E[X² + Y² + Z²] = 1 and the coordinates are symmetric, so E[Y²] = 1/3; E[Y] = 0.</p>`);
+
+mcq("R2: AR(1) variance",2,
+"xₜ = 0.5·xₜ₋₁ + εₜ with Var(ε) = 1. The stationary variance of x is …",
+["1","4/3","2","0.75"],1,
+`<div class="eq">Var(x) = σ²/(1 − φ²) = 1/(1 − 0.25) = 4/3</div>`);
+
+mcq("R2: Spurious regression",2,
+"Regressing one random-walk price level on another, independent one typically gives …",
+["t ≈ 0 and R² ≈ 0","Large t-stats and high R² despite no relationship","Exactly R² = 0","Negative R²"],1,
+`<p>Non-stationary levels produce spurious significance. Regress returns (differences) or test for cointegration instead.</p>`);
+
+mcq("R2: MLE of normal variance",2,
+"The MLE σ̂² = (1/n)Σ(xᵢ − x̄)² has expectation …",
+["σ²","(n − 1)σ²/n","nσ²/(n − 1)","σ²/n"],1,
+`<p>Biased low by a factor (n − 1)/n, because x̄ is fitted from the same data. Dividing by n − 1 fixes it.</p>`);
+
+/* ===================== APP ===================== */
+const CATS=[
+ {id:"last",pre:"LM",name:"Last-minute check",blurb:"Try these right before the interview: Green Book problems (reported verbatim in first rounds), the latest reports, and two online-assessment coding tasks. Items elsewhere marked “Last-minute” are reported questions worth one more pass."},
+ {id:"r2",pre:"R2",name:"Round 2: stats, maths & financial intuition",blurb:"For the second technical round (no coding): OLS derivation, Gauss–Markov conditions, testing, Sharpe ratio, time series, estimators and applied cases. Tagged Reported where a friend or an online report described the question. The quiz section also has R2 questions."},
+ {id:"mcq",pre:"Q",name:"Multiple-choice quiz",blurb:"Pick an answer to see right or wrong plus the worked explanation. Correct answers mark the question Got it; wrong ones go to Review, so the Marked review filter becomes your retry list."},
+ {id:"prob",pre:"P",name:"Probability & expected value",blurb:"The core of the first round. Indicators, conditioning, symmetry and Markov states solve most of these."},
+ {id:"games",pre:"G",name:"Games & optimal stopping",blurb:"Work backwards from the last decision. Say the strategy before computing its value."},
+ {id:"brain",pre:"B",name:"Brainteasers & logic",blurb:"Try small cases, look for symmetry or an invariant, and talk through each step."},
+ {id:"stats",pre:"S",name:"Statistics & inference",blurb:"Estimation, confidence intervals and testing, usually framed around trading decisions."},
+ {id:"reg",pre:"R",name:"Regression",blurb:"Very common at Squarepoint for research roles: know OLS mechanics well enough to reason about edge cases."},
+ {id:"ts",pre:"T",name:"Time series & finance",blurb:"Stationarity, autocorrelation, GBM and option basics."},
+ {id:"sim",pre:"M",name:"Simulation & sampling",blurb:"Generating random variables and checking answers by Monte Carlo."},
+ {id:"code",pre:"C",name:"Coding",blurb:"Often on HackerRank. State brute force first, then optimise and give the complexity."},
+ {id:"lc",pre:"L",name:"LeetCode drills",blurb:"The problems you've worked through, each with starter code and checked test cases to paste into your editor, plus the bugs you hit along the way."},
+ {id:"py",pre:"Y",name:"Python fundamentals",blurb:"Quick conceptual questions reported in Desk Quant and developer screens."},
+ {id:"talk",pre:"D",name:"Discussion",blurb:"Short to prepare, easy to lose points on if you don't."}
+];
+const LVL={1:"Warm-up",2:"Core",3:"Hard"};
+const KEY="sp-prep-status-v1";
+let status={};
+try{status=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){status={};}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(status));}catch(e){}}
+const PKEY="sp-prep-mcq-v1";
+let picks={};
+try{picks=JSON.parse(localStorage.getItem(PKEY)||"{}")||{};}catch(e){picks={};}
+function savePicks(){try{localStorage.setItem(PKEY,JSON.stringify(picks));}catch(e){}}
+function mcqScore(){const e=document.getElementById("mcqScore");if(!e)return;
+  const qs=D.filter(q=>q.opts),done=qs.filter(q=>picks[q.id]!=null),ok=done.filter(q=>picks[q.id]===q.correct);
+  e.textContent=done.length?("Score: "+ok.length+" / "+done.length+" answered ("+(qs.length-done.length)+" left)"):("Score: 0 answered of "+qs.length);}
+
+// reported questions worth one more pass right before the interview
+const LAST_TITLES=["Die game with one re-roll","Unlimited re-rolls, $1 each","Ten-sided die, pay $5 to play","100-card game, paid by fraction of red","Kelly criterion","25 horses, top 3","Josephus: 100 people","Paint a die so the sum is uniform 1–12","Ants falling off a stick","P(X > 0 and Y > X) for iid normals","P(X + Y > 0 | X > 0)","Roll until 6, conditioned on only 4, 5, 6"];
+D.forEach(q=>{if(q.c==="last"||LAST_TITLES.includes(q.t))q.last=true;});
+// assign ids
+const counters={};
+D.forEach(q=>{const c=CATS.find(x=>x.id===q.c);counters[q.c]=(counters[q.c]||0)+1;q.id=c.pre+"-"+String(counters[q.c]).padStart(2,"0");
+  q.text=(q.t+" "+q.q+" "+(q.h||"")+" "+q.a+" "+(q.opts?q.opts.join(" "):"")).replace(/<[^>]+>/g," ").toLowerCase();});
+
+const state={cat:"all",search:"",st:"all",sp:false,showAll:false,last:false};
+const main=document.getElementById("main");
+const cards={};
+
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+
+function buildCard(q){
+  const card=el("article","q");card.id=q.id;card.dataset.s=status[q.id]||"";
+  const head=el("div","qhead");
+  head.append(el("span","qid",q.id));
+  head.append(el("span","tag"+(q.src==="sp"?" sp":""),q.src==="sp"?"Reported":"Classic"));
+  if(q.last&&q.c!=="last")head.append(el("span","tag last","Last-minute"));
+  head.append(el("span","lvl",LVL[q.lvl]||""));
+  card.append(head);
+  card.append(el("h3",null,q.t));
+  card.append(el("div","prompt",q.q));
+  const hint=el("div","hint","<b>Hint:</b> "+q.h);hint.hidden=true;
+  const ans=el("div","ans",q.a);ans.hidden=true;
+  let optBox=null;
+  if(q.opts){
+    optBox=el("div","opts");optBox.setAttribute("role","group");optBox.setAttribute("aria-label","Answer options");
+    const fb=el("div","fb");fb.setAttribute("aria-live","polite");
+    const btns=q.opts.map((o,i)=>{const b=el("button","opt","<span class=\"ol\">"+"ABCDEF"[i]+"</span><span>"+o+"</span>");b.type="button";
+      b.onclick=()=>pick(i);optBox.append(b);return b;});
+    optBox.append(fb);
+    function paint(){const p=picks[q.id];
+      btns.forEach((b,i)=>{b.classList.remove("right","wrong");b.disabled=p!=null;
+        if(p!=null&&i===q.correct)b.classList.add("right");if(p!=null&&i===p&&p!==q.correct)b.classList.add("wrong");});
+      fb.textContent=p==null?"":(p===q.correct?"Correct.":"Not quite: the answer is "+"ABCDEF"[q.correct]+".");
+      fb.className="fb"+(p==null?"":(p===q.correct?" ok":" no"));}
+    function pick(i){picks[q.id]=i;savePicks();status[q.id]=(i===q.correct)?"got":"rev";save();sync();stats();mcqScore();paint();
+      ans.hidden=false;bA.textContent="Hide answer";bA.setAttribute("aria-expanded","true");}
+    card._resetMcq=()=>{delete picks[q.id];delete status[q.id];paint();sync();ans.hidden=true;bA.textContent="Show answer";};
+    card._paint=paint;
+  }
+  if(q.code){const pre=el("pre","code");pre.textContent=q.code;ans.append(pre);}
+  const act=el("div","actions");
+  const bH=el("button","btn","Hint");bH.type="button";bH.setAttribute("aria-expanded","false");
+  const bA=el("button","btn","Show answer");bA.type="button";bA.setAttribute("aria-expanded","false");
+  let bS=null,sBox=null;
+  if(q.starter){
+    sBox=el("div","starter");sBox.hidden=true;
+    const top=el("div","starter-top","<span>Starter code + tests: paste into your editor and run</span>");
+    const bC=el("button","btn","Copy");bC.type="button";
+    const pre=el("pre","code");pre.textContent=q.starter;
+    bC.onclick=async()=>{
+      let ok=false;
+      try{await navigator.clipboard.writeText(q.starter);ok=true;}catch(e){}
+      if(!ok){try{const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);ok=document.execCommand("copy");}catch(e){}}
+      bC.textContent=ok?"Copied":"Selected: press Ctrl/Cmd+C";
+      setTimeout(()=>{bC.textContent="Copy";},2000);
+    };
+    top.append(bC);sBox.append(top,pre);
+    bS=el("button","btn","Starter + tests");bS.type="button";bS.setAttribute("aria-expanded","false");
+    bS.onclick=()=>{sBox.hidden=!sBox.hidden;bS.setAttribute("aria-expanded",String(!sBox.hidden));};
+  }
+  const bG=el("button","btn s-got","Got it");bG.type="button";
+  const bR=el("button","btn s-rev","Review");bR.type="button";
+  bH.onclick=()=>{hint.hidden=!hint.hidden;bH.setAttribute("aria-expanded",String(!hint.hidden));};
+  bA.onclick=()=>{ans.hidden=!ans.hidden;bA.textContent=ans.hidden?"Show answer":"Hide answer";bA.setAttribute("aria-expanded",String(!ans.hidden));};
+  function setS(s){status[q.id]=(status[q.id]===s)?undefined:s;if(!status[q.id])delete status[q.id];save();sync();stats();if(state.st!=="all")render();}
+  function sync(){const s=status[q.id]||"";card.dataset.s=s;bG.setAttribute("aria-pressed",String(s==="got"));bR.setAttribute("aria-pressed",String(s==="rev"));}
+  bG.onclick=()=>setS("got");bR.onclick=()=>setS("rev");
+  sync();
+  if(optBox){card.append(optBox);if(q.h)act.append(bH);act.append(bA);if(q.h)card.append(act,hint);else card.append(act);card.append(ans);card._paint();}
+  else{act.append(bH);if(bS)act.append(bS);act.append(bA,bG,bR);
+  card.append(act,hint);if(sBox)card.append(sBox);card.append(ans);}
+  card._ans=ans;card._bA=bA;
+  return card;
+}
+D.forEach(q=>cards[q.id]=buildCard(q));
+
+function matches(q){
+  if(state.cat!=="all"&&q.c!==state.cat)return false;
+  if(state.sp&&q.src!=="sp")return false;
+  if(state.last&&!q.last)return false;
+  const s=status[q.id];
+  if(state.st==="new"&&s)return false;
+  if(state.st==="rev"&&s!=="rev")return false;
+  if(state.st==="got"&&s!=="got")return false;
+  if(state.search){const terms=state.search.toLowerCase().split(/\s+/).filter(Boolean);if(!terms.every(t=>q.text.includes(t)))return false;}
+  return true;
+}
+function visible(){return D.filter(matches);}
+
+function render(){
+  main.innerHTML="";
+  let any=false;
+  CATS.forEach(c=>{
+    const qs=D.filter(q=>q.c===c.id&&matches(q));
+    if(!qs.length)return;any=true;
+    const sec=el("section","cat");sec.id="cat-"+c.id;
+    sec.append(el("h2",null,c.name+" <small>"+qs.length+"</small>"));
+    sec.append(el("p",null,c.blurb));
+    if(c.id==="mcq"){const bar=el("div","mcqbar");const sc=el("span","score");sc.id="mcqScore";
+      const rs=el("button","btn","Reset quiz");rs.type="button";
+      rs.onclick=()=>{D.filter(q=>q.opts).forEach(q=>cards[q.id]._resetMcq());savePicks();save();stats();mcqScore();if(state.st!=="all")render();};
+      bar.append(sc,rs);sec.append(bar);}
+    const list=el("div","list");
+    qs.forEach(q=>{const card=cards[q.id];card._ans.hidden=!state.showAll;card._bA.textContent=state.showAll?"Hide answer":"Show answer";list.append(card);});
+    sec.append(list);main.append(sec);
+    if(c.id==="mcq")mcqScore();
+  });
+  if(!any)main.append(el("p","empty","No questions match these filters."));
+}
+
+function chips(){
+  const box=document.getElementById("chips");box.innerHTML="";
+  const all=[{id:"all",name:"All topics",n:D.length}].concat(CATS.map(c=>({id:c.id,name:c.name,n:D.filter(q=>q.c===c.id).length})));
+  all.forEach(c=>{const b=el("button","chip",c.name+"<small>"+c.n+"</small>");b.type="button";b.setAttribute("aria-pressed",String(state.cat===c.id));
+    b.onclick=()=>{state.cat=c.id;chips();render();};box.append(b);});
+}
+
+function stats(){
+  const n=D.length,g=D.filter(q=>status[q.id]==="got").length,r=D.filter(q=>status[q.id]==="rev").length,sp=D.filter(q=>q.src==="sp").length;
+  document.getElementById("stats").innerHTML=
+   `<div class="stat"><b>${n}</b><span>questions</span></div>`+
+   `<div class="stat"><b>${sp}</b><span>reported at Squarepoint</span></div>`+
+   `<div class="stat got"><b>${g}</b><span>got it</span></div>`+
+   `<div class="stat rev"><b>${r}</b><span>to review</span></div>`+
+   `<div class="stat"><b>${n-g-r}</b><span>not done</span></div>`;
+  const bar=document.getElementById("bar").children;bar[0].style.width=(100*g/n)+"%";bar[1].style.width=(100*r/n)+"%";
+}
+
+// timer
+let t0=null,tick=null;
+const tEl=document.getElementById("timer");
+function fmt(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
+function startTimer(){t0=Date.now();clearInterval(tick);tEl.textContent="0:00";tick=setInterval(()=>{tEl.textContent=fmt(Math.floor((Date.now()-t0)/1000));},1000);}
+document.getElementById("timerReset").onclick=()=>{clearInterval(tick);t0=null;tEl.textContent="0:00";};
+
+document.getElementById("random").onclick=()=>{
+  let pool=visible().filter(q=>status[q.id]!=="got");
+  if(!pool.length)pool=visible();
+  if(!pool.length)return;
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  const card=cards[q.id];
+  card._ans.hidden=true;card._bA.textContent="Show answer";
+  const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  card.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+  card.classList.add("flash");setTimeout(()=>card.classList.remove("flash"),1600);
+  startTimer();
+};
+document.getElementById("search").addEventListener("input",e=>{state.search=e.target.value.trim();render();});
+document.getElementById("status").addEventListener("change",e=>{state.st=e.target.value;render();});
+document.getElementById("spOnly").addEventListener("change",e=>{state.sp=e.target.checked;render();});
+document.getElementById("lastOnly").addEventListener("change",e=>{state.last=e.target.checked;render();});
+document.getElementById("showAll").addEventListener("change",e=>{state.showAll=e.target.checked;render();});
+
+chips();stats();render();
+</script>
+
+</body>
+</html>
